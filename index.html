@@ -96,12 +96,14 @@
       <!-- Profile Header -->
       <div class="flex items-center justify-between border-b border-gray-200/60 pb-4">
         <div class="flex items-center space-x-3">
-          <div id="profile-modal-avatar" class="w-14 h-14 rounded-full bg-appleBlue text-white flex items-center justify-center font-bold text-xl shadow-sm">
-            H
+          <div id="profile-modal-avatar-container" class="w-14 h-14 rounded-full bg-appleBlue text-white flex items-center justify-center font-bold text-xl shadow-sm overflow-hidden">
+            <span id="profile-modal-avatar-text">H</span>
+            <img id="profile-modal-avatar-img" src="" class="w-full h-full object-cover hidden" alt="Hundebilde">
           </div>
           <div>
             <h3 id="profile-modal-name" class="text-xl font-bold text-appleText">Hundens navn</h3>
-            <p id="profile-modal-breed" class="text-xs font-medium text-appleSub">Rase</p>
+            <p id="profile-modal-reg-name" class="text-xs font-semibold text-appleBlue">Registrert navn</p>
+            <p id="profile-modal-breed" class="text-xs text-appleSub">Rase</p>
           </div>
         </div>
         <button onclick="closeDogProfileModal()" class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-appleSub hover:bg-gray-200">
@@ -115,6 +117,14 @@
         <!-- Generell info -->
         <div class="bg-white/60 p-4 rounded-xl border border-gray-100 space-y-2.5">
           <h4 class="text-xs font-bold text-appleSub uppercase tracking-wider">Generelt</h4>
+          <div class="flex justify-between py-1 border-b border-gray-100">
+            <span class="text-appleSub">Kallenavn:</span>
+            <span id="profile-modal-val-name" class="font-medium text-appleText">-</span>
+          </div>
+          <div class="flex justify-between py-1 border-b border-gray-100">
+            <span class="text-appleSub">Registrert navn:</span>
+            <span id="profile-modal-val-reg-name" class="font-medium text-appleText">-</span>
+          </div>
           <div class="flex justify-between py-1 border-b border-gray-100">
             <span class="text-appleSub">Fødselsdato:</span>
             <span id="profile-modal-dob" class="font-medium text-appleText">-</span>
@@ -166,11 +176,14 @@
       </div>
 
       <!-- Actions -->
-      <div class="pt-2 flex space-x-3">
-        <button onclick="deleteCurrentDogProfile()" class="flex-1 py-3 bg-rose-50 text-rose-600 font-medium rounded-xl hover:bg-rose-100 transition text-sm">
-          Slett hund
+      <div class="pt-2 flex space-x-2">
+        <button onclick="openEditDogModal()" class="flex-1 py-3 bg-appleBlue text-white font-medium rounded-xl hover:bg-appleBlueHover transition text-sm shadow-sm">
+          <i class="fa-solid fa-pen-to-square mr-1"></i> Rediger
         </button>
-        <button onclick="closeDogProfileModal()" class="flex-1 py-3 bg-appleBlue text-white font-medium rounded-xl hover:bg-appleBlueHover transition text-sm shadow-sm">
+        <button onclick="deleteCurrentDogProfile()" class="py-3 px-4 bg-rose-50 text-rose-600 font-medium rounded-xl hover:bg-rose-100 transition text-sm">
+          <i class="fa-solid fa-trash-can"></i>
+        </button>
+        <button onclick="closeDogProfileModal()" class="py-3 px-4 bg-gray-100 text-appleText font-medium rounded-xl hover:bg-gray-200 transition text-sm">
           Lukk
         </button>
       </div>
@@ -178,23 +191,32 @@
     </div>
   </div>
 
-  <!-- MODAL: ADD DOG -->
+  <!-- MODAL: ADD / EDIT DOG -->
   <div id="dog-modal" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
     <div class="glass-card w-full sm:max-w-md max-h-[90vh] overflow-y-auto rounded-t-3xl sm:rounded-2xl p-6 shadow-2xl border border-gray-200 space-y-4 animate-in fade-in slide-in-from-bottom duration-200">
       <div class="flex items-center justify-between">
-        <h3 class="text-lg font-semibold text-appleText">Legg til ny hund</h3>
+        <h3 id="dog-modal-title" class="text-lg font-semibold text-appleText">Legg til ny hund</h3>
         <button onclick="closeAddDogModal()" class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-appleSub hover:bg-gray-200">
           <i class="fa-solid fa-xmark"></i>
         </button>
       </div>
       <form id="dog-form" onsubmit="handleDogSubmit(event)" class="space-y-3.5 text-sm">
+        <input type="hidden" id="dog-edit-id">
         <div>
-          <label class="block text-xs font-medium text-appleSub mb-1">Hundens navn *</label>
+          <label class="block text-xs font-medium text-appleSub mb-1">Kallenavn (Hundens navn) *</label>
           <input type="text" id="dog-name" required class="w-full px-3.5 py-2 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-appleBlue bg-white text-sm" placeholder="F.eks. Penny">
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-appleSub mb-1">Registrert navn (Stamtavlenavn)</label>
+          <input type="text" id="dog-reg-name" class="w-full px-3.5 py-2 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-appleBlue bg-white text-sm" placeholder="F.eks. N UCH To Notice Amazing Penny">
         </div>
         <div>
           <label class="block text-xs font-medium text-appleSub mb-1">Rase *</label>
           <input type="text" id="dog-breed" required class="w-full px-3.5 py-2 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-appleBlue bg-white text-sm" placeholder="F.eks. Miniature American Shepherd">
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-appleSub mb-1">Bilde-URL (eller lenke til bilde)</label>
+          <input type="url" id="dog-image" class="w-full px-3.5 py-2 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-appleBlue bg-white text-sm" placeholder="https://eksempel.no/bilde.jpg">
         </div>
         <div class="grid grid-cols-2 gap-2">
           <div>
@@ -228,8 +250,8 @@
           <input type="text" id="dog-chip" class="w-full px-3.5 py-2 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-appleBlue bg-white text-sm" placeholder="15-sifret chipnr">
         </div>
         <div>
-          <label class="block text-xs font-medium text-appleSub mb-1">Stamtavle / Pedigree navn</label>
-          <input type="text" id="dog-pedigree" class="w-full px-3.5 py-2 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-appleBlue bg-white text-sm" placeholder="Offisielt stamtavlenavn">
+          <label class="block text-xs font-medium text-appleSub mb-1">Stamtavle (Pedigree info)</label>
+          <input type="text" id="dog-pedigree" class="w-full px-3.5 py-2 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-appleBlue bg-white text-sm" placeholder="Mor/Far informasjon">
         </div>
         <div>
           <label class="block text-xs font-medium text-appleSub mb-1">Helsestatus (HD/AD, øyne o.l.)</label>
@@ -340,14 +362,20 @@
         return;
       }
 
-      headerContainer.innerHTML = cachedDogs.map(dog => `
-        <button onclick="openDogProfile('${dog.id}')" class="flex flex-col items-center space-y-1 group focus:outline-none shrink-0">
-          <div class="w-11 h-11 rounded-full bg-gradient-to-tr from-appleBlue to-blue-400 text-white flex items-center justify-center font-bold text-sm shadow-sm ring-2 ring-white group-hover:scale-105 transition">
-            ${dog.name.charAt(0).toUpperCase()}
-          </div>
-          <span class="text-[11px] font-medium text-appleText max-w-[60px] truncate">${escapeHtml(dog.name)}</span>
-        </button>
-      `).join('') + `
+      headerContainer.innerHTML = cachedDogs.map(dog => {
+        const avatarContent = dog.image 
+          ? `<img src="${escapeHtml(dog.image)}" class="w-full h-full object-cover" alt="${escapeHtml(dog.name)}">`
+          : `<span>${dog.name.charAt(0).toUpperCase()}</span>`;
+
+        return `
+          <button onclick="openDogProfile('${dog.id}')" class="flex flex-col items-center space-y-1 group focus:outline-none shrink-0">
+            <div class="w-11 h-11 rounded-full bg-gradient-to-tr from-appleBlue to-blue-400 text-white flex items-center justify-center font-bold text-sm shadow-sm ring-2 ring-white group-hover:scale-105 transition overflow-hidden">
+              ${avatarContent}
+            </div>
+            <span class="text-[11px] font-medium text-appleText max-w-[60px] truncate">${escapeHtml(dog.name)}</span>
+          </button>
+        `;
+      }).join('') + `
         <button onclick="openAddDogModal()" class="flex flex-col items-center space-y-1 group focus:outline-none shrink-0 ml-1">
           <div class="w-11 h-11 rounded-full bg-gray-200 text-appleSub flex items-center justify-center text-sm shadow-sm ring-2 ring-white group-hover:bg-gray-300 transition">
             <i class="fa-solid fa-plus"></i>
@@ -398,10 +426,25 @@
 
       activeDogIdForModal = dog.id;
       document.getElementById('profile-modal-name').textContent = dog.name;
+      document.getElementById('profile-modal-reg-name').textContent = dog.reg_name || 'Ingen registrert navn';
       document.getElementById('profile-modal-breed').textContent = dog.breed || 'Ukjent rase';
-      document.getElementById('profile-modal-avatar').textContent = dog.name.charAt(0).toUpperCase();
+
+      // Avatar bilde eller bokstav
+      const avatarImg = document.getElementById('profile-modal-avatar-img');
+      const avatarText = document.getElementById('profile-modal-avatar-text');
+      if (dog.image) {
+        avatarImg.src = dog.image;
+        avatarImg.classList.remove('hidden');
+        avatarText.classList.add('hidden');
+      } else {
+        avatarImg.classList.add('hidden');
+        avatarText.classList.remove('hidden');
+        avatarText.textContent = dog.name.charAt(0).toUpperCase();
+      }
 
       // Detaljerte felt
+      document.getElementById('profile-modal-val-name').textContent = dog.name || '-';
+      document.getElementById('profile-modal-val-reg-name').textContent = dog.reg_name || 'Ikke oppgitt';
       document.getElementById('profile-modal-dob').textContent = dog.dob ? new Date(dog.dob).toLocaleDateString('no-NO') : 'Ikke oppgitt';
       document.getElementById('profile-modal-breed-val').textContent = dog.breed || 'Ikke oppgitt';
       document.getElementById('profile-modal-gender').textContent = dog.gender || 'Ikke oppgitt';
@@ -425,6 +468,84 @@
       activeDogIdForModal = null;
     }
 
+    function openAddDogModal() {
+      document.getElementById('dog-edit-id').value = '';
+      document.getElementById('dog-modal-title').textContent = 'Legg til ny hund';
+      document.getElementById('dog-form').reset();
+      document.getElementById('dog-modal').classList.remove('hidden');
+    }
+
+    function openEditDogModal() {
+      const dog = cachedDogs.find(d => d.id === activeDogIdForModal);
+      if (!dog) return;
+
+      closeDogProfileModal();
+
+      document.getElementById('dog-edit-id').value = dog.id;
+      document.getElementById('dog-modal-title').textContent = 'Rediger hund';
+      document.getElementById('dog-name').value = dog.name || '';
+      document.getElementById('dog-reg-name').value = dog.reg_name || '';
+      document.getElementById('dog-breed').value = dog.breed || '';
+      document.getElementById('dog-image').value = dog.image || '';
+      document.getElementById('dog-dob').value = dog.dob || '';
+      document.getElementById('dog-gender').value = dog.gender || 'Tispe';
+      document.getElementById('dog-height').value = dog.height || '';
+      document.getElementById('dog-weight').value = dog.weight || '';
+      document.getElementById('dog-nkk').value = dog.nkk || '';
+      document.getElementById('dog-chip').value = dog.chip || '';
+      document.getElementById('dog-pedigree').value = dog.pedigree || '';
+      document.getElementById('dog-health').value = dog.health || '';
+      document.getElementById('dog-titles').value = dog.titles || '';
+
+      document.getElementById('dog-modal').classList.add('hidden'); // Bare for sikkerhets skyld
+      setTimeout(() => {
+        document.getElementById('dog-modal').classList.remove('hidden');
+      }, 100);
+    }
+
+    function closeAddDogModal() {
+      document.getElementById('dog-modal').classList.add('hidden');
+      document.getElementById('dog-form').reset();
+      document.getElementById('dog-edit-id').value = '';
+    }
+
+    async function handleDogSubmit(e) {
+      e.preventDefault();
+      const editId = document.getElementById('dog-edit-id').value;
+      const name = document.getElementById('dog-name').value;
+      const reg_name = document.getElementById('dog-reg-name').value;
+      const breed = document.getElementById('dog-breed').value;
+      const image = document.getElementById('dog-image').value;
+      const dob = document.getElementById('dog-dob').value || null;
+      const gender = document.getElementById('dog-gender').value;
+      const height = document.getElementById('dog-height').value;
+      const weight = document.getElementById('dog-weight').value;
+      const nkk = document.getElementById('dog-nkk').value;
+      const chip = document.getElementById('dog-chip').value;
+      const pedigree = document.getElementById('dog-pedigree').value;
+      const health = document.getElementById('dog-health').value;
+      const titles = document.getElementById('dog-titles').value;
+
+      const payload = { name, reg_name, breed, image, dob, gender, height, weight, nkk, chip, pedigree, health, titles };
+
+      let error;
+      if (editId) {
+        const res = await supabaseClient.from('dogs').update(payload).eq('id', editId);
+        error = res.error;
+      } else {
+        const res = await supabaseClient.from('dogs').insert([payload]);
+        error = res.error;
+      }
+
+      if (error) {
+        alert('Feil ved lagring av hund: ' + error.message + '\n\nMerk: Hvis du ikke har lagt til nye kolonner (som reg_name, image) i Supabase ennå, må du kjøre SQL-kommandoen for å opprette dem.');
+        return;
+      }
+
+      closeAddDogModal();
+      loadData();
+    }
+
     async function deleteCurrentDogProfile() {
       if (!activeDogIdForModal) return;
       if (!confirm('Er du sikker på at du vil slette denne hunden? Alle tilknyttede logger kan bli påvirket.')) return;
@@ -436,39 +557,6 @@
       }
 
       closeDogProfileModal();
-      loadData();
-    }
-
-    function openAddDogModal() { document.getElementById('dog-modal').classList.remove('hidden'); }
-    function closeAddDogModal() { document.getElementById('dog-modal').classList.add('hidden'); document.getElementById('dog-form').reset(); }
-    
-    function openAddLogModal() { document.getElementById('log-modal').classList.remove('hidden'); }
-    function closeAddLogModal() { document.getElementById('log-modal').classList.add('hidden'); document.getElementById('log-form').reset(); }
-
-    async function handleDogSubmit(e) {
-      e.preventDefault();
-      const name = document.getElementById('dog-name').value;
-      const breed = document.getElementById('dog-breed').value;
-      const dob = document.getElementById('dog-dob').value || null;
-      const gender = document.getElementById('dog-gender').value;
-      const height = document.getElementById('dog-height').value;
-      const weight = document.getElementById('dog-weight').value;
-      const nkk = document.getElementById('dog-nkk').value;
-      const chip = document.getElementById('dog-chip').value;
-      const pedigree = document.getElementById('dog-pedigree').value;
-      const health = document.getElementById('dog-health').value;
-      const titles = document.getElementById('dog-titles').value;
-
-      const { error } = await supabaseClient.from('dogs').insert([{ 
-        name, breed, dob, gender, height, weight, nkk, chip, pedigree, health, titles 
-      }]);
-
-      if (error) {
-        alert('Feil ved lagring av hund: ' + error.message + '\n\nMerk: Hvis du ikke har lagt til disse nye kolonnene i Supabase ennå, må du kjøre SQL-kommandoen for å opprette dem i databasen.');
-        return;
-      }
-
-      closeAddDogModal();
       loadData();
     }
 
