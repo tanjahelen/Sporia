@@ -3,15 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Hundebehandling</title>
+  <title>Sporia</title>
   
   <!-- PWA & Mobile settings -->
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#db2777">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta name="apple-mobile-web-app-title" content="Hunder">
-  <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/616/616408.png">
+  <meta name="apple-mobile-web-app-title" content="Sporia">
+  <link rel="apple-touch-icon" href="icon-192.png">
 
   <!-- Tailwind CSS + DaisyUI -->
   <link href="https://cdn.jsdelivr.net/npm/daisyui@4.7.2/dist/full.min.css" rel="stylesheet" type="text/css" />
@@ -37,7 +37,7 @@
     
     <!-- Tittel -->
     <header class="text-center py-2">
-      <h1 class="text-2xl font-bold tracking-tight text-slate-900">Hundene mine</h1>
+      <h1 class="text-2xl font-bold tracking-tight text-slate-900">Sporia</h1>
       <p class="text-sm text-slate-500 mt-1">Registrer og hold oversikt over hundene dine</p>
     </header>
 
@@ -299,7 +299,7 @@
         name: document.getElementById('edit_name').value,
         breed: document.getElementById('edit_breed').value || null,
         weight_kg: document.getElementById('edit_weight_kg').value ? parseFloat(document.getElementById('edit_weight_kg').value) : null,
-        birth_date: document.getElementById('birth_date').value || null,
+        birth_date: document.getElementById('edit_birth_date').value || null,
         gender: document.getElementById('edit_gender').value || null,
         chip_number: document.getElementById('edit_chip_number').value || null,
         reg_number: document.getElementById('edit_reg_number').value || null
