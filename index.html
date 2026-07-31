@@ -89,65 +89,157 @@
 
   </main>
 
-  <!-- MODAL: DOG PROFILE / DETAILS -->
+  <!-- MODAL: FULL DOG PROFILE -->
   <div id="dog-profile-modal" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
-    <div class="glass-card w-full sm:max-w-md rounded-t-3xl sm:rounded-2xl p-6 shadow-2xl border border-gray-200 space-y-4 animate-in fade-in slide-in-from-bottom duration-200">
-      <div class="flex items-center justify-between">
+    <div class="glass-card w-full sm:max-w-lg max-h-[90vh] overflow-y-auto rounded-t-3xl sm:rounded-2xl p-6 shadow-2xl border border-gray-200 space-y-6 animate-in fade-in slide-in-from-bottom duration-200">
+      
+      <!-- Profile Header -->
+      <div class="flex items-center justify-between border-b border-gray-200/60 pb-4">
         <div class="flex items-center space-x-3">
-          <div id="profile-modal-avatar" class="w-12 h-12 rounded-full bg-appleBlue text-white flex items-center justify-center font-bold text-lg shadow-sm">
+          <div id="profile-modal-avatar" class="w-14 h-14 rounded-full bg-appleBlue text-white flex items-center justify-center font-bold text-xl shadow-sm">
             H
           </div>
           <div>
-            <h3 id="profile-modal-name" class="text-lg font-semibold text-appleText">Hundens navn</h3>
-            <p id="profile-modal-breed" class="text-xs text-appleSub">Rase</p>
+            <h3 id="profile-modal-name" class="text-xl font-bold text-appleText">Hundens navn</h3>
+            <p id="profile-modal-breed" class="text-xs font-medium text-appleSub">Rase</p>
           </div>
         </div>
         <button onclick="closeDogProfileModal()" class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-appleSub hover:bg-gray-200">
           <i class="fa-solid fa-xmark"></i>
         </button>
       </div>
-      
-      <div class="bg-white/60 p-4 rounded-xl border border-gray-100 space-y-2 text-sm">
-        <div class="flex justify-between py-1 border-b border-gray-100">
-          <span class="text-appleSub">Fødselsdato:</span>
-          <span id="profile-modal-dob" class="font-medium text-appleText">-</span>
+
+      <!-- Detailed Info Grid -->
+      <div class="space-y-4 text-sm">
+        
+        <!-- Generell info -->
+        <div class="bg-white/60 p-4 rounded-xl border border-gray-100 space-y-2.5">
+          <h4 class="text-xs font-bold text-appleSub uppercase tracking-wider">Generelt</h4>
+          <div class="flex justify-between py-1 border-b border-gray-100">
+            <span class="text-appleSub">Fødselsdato:</span>
+            <span id="profile-modal-dob" class="font-medium text-appleText">-</span>
+          </div>
+          <div class="flex justify-between py-1 border-b border-gray-100">
+            <span class="text-appleSub">Rase:</span>
+            <span id="profile-modal-breed-val" class="font-medium text-appleText">-</span>
+          </div>
+          <div class="flex justify-between py-1 border-b border-gray-100">
+            <span class="text-appleSub">Kjønn:</span>
+            <span id="profile-modal-gender" class="font-medium text-appleText">-</span>
+          </div>
+          <div class="flex justify-between py-1">
+            <span class="text-appleSub">Høyde / Vekt:</span>
+            <span id="profile-modal-size" class="font-medium text-appleText">-</span>
+          </div>
         </div>
+
+        <!-- Offisiell info & ID -->
+        <div class="bg-white/60 p-4 rounded-xl border border-gray-100 space-y-2.5">
+          <h4 class="text-xs font-bold text-appleSub uppercase tracking-wider">Registrering & ID</h4>
+          <div class="flex justify-between py-1 border-b border-gray-100">
+            <span class="text-appleSub">NKK Reg.nr:</span>
+            <span id="profile-modal-nkk" class="font-medium text-appleText">-</span>
+          </div>
+          <div class="flex justify-between py-1 border-b border-gray-100">
+            <span class="text-appleSub">Chip-nummer:</span>
+            <span id="profile-modal-chip" class="font-medium text-appleText">-</span>
+          </div>
+          <div class="flex justify-between py-1">
+            <span class="text-appleSub">Stamtavle (Pedigree):</span>
+            <span id="profile-modal-pedigree" class="font-medium text-appleText">-</span>
+          </div>
+        </div>
+
+        <!-- Helse & Helsehistorikk -->
+        <div class="bg-white/60 p-4 rounded-xl border border-gray-100 space-y-2.5">
+          <h4 class="text-xs font-bold text-appleSub uppercase tracking-wider">Helse & Status</h4>
+          <div class="flex justify-between py-1 border-b border-gray-100">
+            <span class="text-appleSub">Helsestatus / HD/AD o.l.:</span>
+            <span id="profile-modal-health" class="font-medium text-appleText">-</span>
+          </div>
+          <div class="flex justify-between py-1">
+            <span class="text-appleSub">Titler & Meritter:</span>
+            <span id="profile-modal-titles" class="font-medium text-appleText">-</span>
+          </div>
+        </div>
+
       </div>
 
+      <!-- Actions -->
       <div class="pt-2 flex space-x-3">
-        <button onclick="deleteCurrentDogProfile()" class="flex-1 py-2.5 bg-rose-50 text-rose-600 font-medium rounded-xl hover:bg-rose-100 transition text-sm">
+        <button onclick="deleteCurrentDogProfile()" class="flex-1 py-3 bg-rose-50 text-rose-600 font-medium rounded-xl hover:bg-rose-100 transition text-sm">
           Slett hund
         </button>
-        <button onclick="closeDogProfileModal()" class="flex-1 py-2.5 bg-gray-100 text-appleText font-medium rounded-xl hover:bg-gray-200 transition text-sm">
+        <button onclick="closeDogProfileModal()" class="flex-1 py-3 bg-appleBlue text-white font-medium rounded-xl hover:bg-appleBlueHover transition text-sm shadow-sm">
           Lukk
         </button>
       </div>
+
     </div>
   </div>
 
   <!-- MODAL: ADD DOG -->
   <div id="dog-modal" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
-    <div class="glass-card w-full sm:max-w-md rounded-t-3xl sm:rounded-2xl p-6 shadow-2xl border border-gray-200 space-y-4 animate-in fade-in slide-in-from-bottom duration-200">
+    <div class="glass-card w-full sm:max-w-md max-h-[90vh] overflow-y-auto rounded-t-3xl sm:rounded-2xl p-6 shadow-2xl border border-gray-200 space-y-4 animate-in fade-in slide-in-from-bottom duration-200">
       <div class="flex items-center justify-between">
         <h3 class="text-lg font-semibold text-appleText">Legg til ny hund</h3>
         <button onclick="closeAddDogModal()" class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-appleSub hover:bg-gray-200">
           <i class="fa-solid fa-xmark"></i>
         </button>
       </div>
-      <form id="dog-form" onsubmit="handleDogSubmit(event)" class="space-y-4">
+      <form id="dog-form" onsubmit="handleDogSubmit(event)" class="space-y-3.5 text-sm">
         <div>
-          <label class="block text-xs font-medium text-appleSub mb-1">Hundens navn</label>
-          <input type="text" id="dog-name" required class="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-appleBlue bg-white text-sm" placeholder="F.eks. Penny">
+          <label class="block text-xs font-medium text-appleSub mb-1">Hundens navn *</label>
+          <input type="text" id="dog-name" required class="w-full px-3.5 py-2 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-appleBlue bg-white text-sm" placeholder="F.eks. Penny">
         </div>
         <div>
-          <label class="block text-xs font-medium text-appleSub mb-1">Rase</label>
-          <input type="text" id="dog-breed" required class="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-appleBlue bg-white text-sm" placeholder="F.eks. Miniature American Shepherd">
+          <label class="block text-xs font-medium text-appleSub mb-1">Rase *</label>
+          <input type="text" id="dog-breed" required class="w-full px-3.5 py-2 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-appleBlue bg-white text-sm" placeholder="F.eks. Miniature American Shepherd">
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block text-xs font-medium text-appleSub mb-1">Fødselsdato</label>
+            <input type="date" id="dog-dob" class="w-full px-3 py-2 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-appleBlue bg-white text-xs">
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-appleSub mb-1">Kjønn</label>
+            <select id="dog-gender" class="w-full px-3 py-2 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-appleBlue bg-white text-xs">
+              <option value="Tispe">Tispe</option>
+              <option value="Hannhund">Hannhund</option>
+            </select>
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block text-xs font-medium text-appleSub mb-1">Høyde</label>
+            <input type="text" id="dog-height" class="w-full px-3.5 py-2 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-appleBlue bg-white text-sm" placeholder="F.eks. 41 cm">
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-appleSub mb-1">Vekt</label>
+            <input type="text" id="dog-weight" class="w-full px-3.5 py-2 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-appleBlue bg-white text-sm" placeholder="F.eks. 11 kg">
+          </div>
         </div>
         <div>
-          <label class="block text-xs font-medium text-appleSub mb-1">Fødselsdato</label>
-          <input type="date" id="dog-dob" class="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-appleBlue bg-white text-sm">
+          <label class="block text-xs font-medium text-appleSub mb-1">NKK Reg.nr</label>
+          <input type="text" id="dog-nkk" class="w-full px-3.5 py-2 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-appleBlue bg-white text-sm" placeholder="NO12345/24">
         </div>
-        <button type="submit" class="w-full py-3 bg-appleBlue text-white font-medium rounded-xl hover:bg-appleBlueHover transition shadow-sm active:scale-98">
+        <div>
+          <label class="block text-xs font-medium text-appleSub mb-1">Chip-nummer</label>
+          <input type="text" id="dog-chip" class="w-full px-3.5 py-2 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-appleBlue bg-white text-sm" placeholder="15-sifret chipnr">
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-appleSub mb-1">Stamtavle / Pedigree navn</label>
+          <input type="text" id="dog-pedigree" class="w-full px-3.5 py-2 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-appleBlue bg-white text-sm" placeholder="Offisielt stamtavlenavn">
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-appleSub mb-1">Helsestatus (HD/AD, øyne o.l.)</label>
+          <input type="text" id="dog-health" class="w-full px-3.5 py-2 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-appleBlue bg-white text-sm" placeholder="F.eks. Fri HD A / AD 0">
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-appleSub mb-1">Titler & Meritter</label>
+          <input type="text" id="dog-titles" class="w-full px-3.5 py-2 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-appleBlue bg-white text-sm" placeholder="F.eks. RL1, RLT">
+        </div>
+        <button type="submit" class="w-full py-3 bg-appleBlue text-white font-medium rounded-xl hover:bg-appleBlueHover transition shadow-sm active:scale-98 mt-2">
           Lagre hund
         </button>
       </form>
@@ -307,8 +399,23 @@
       activeDogIdForModal = dog.id;
       document.getElementById('profile-modal-name').textContent = dog.name;
       document.getElementById('profile-modal-breed').textContent = dog.breed || 'Ukjent rase';
-      document.getElementById('profile-modal-dob').textContent = dog.dob ? new Date(dog.dob).toLocaleDateString('no-NO') : 'Ikke oppgitt';
       document.getElementById('profile-modal-avatar').textContent = dog.name.charAt(0).toUpperCase();
+
+      // Detaljerte felt
+      document.getElementById('profile-modal-dob').textContent = dog.dob ? new Date(dog.dob).toLocaleDateString('no-NO') : 'Ikke oppgitt';
+      document.getElementById('profile-modal-breed-val').textContent = dog.breed || 'Ikke oppgitt';
+      document.getElementById('profile-modal-gender').textContent = dog.gender || 'Ikke oppgitt';
+      
+      const height = dog.height || '-';
+      const weight = dog.weight || '-';
+      document.getElementById('profile-modal-size').textContent = `${height} / ${weight}`;
+
+      document.getElementById('profile-modal-nkk').textContent = dog.nkk || 'Ikke oppgitt';
+      document.getElementById('profile-modal-chip').textContent = dog.chip || 'Ikke oppgitt';
+      document.getElementById('profile-modal-pedigree').textContent = dog.pedigree || 'Ikke oppgitt';
+      
+      document.getElementById('profile-modal-health').textContent = dog.health || 'Ikke oppgitt';
+      document.getElementById('profile-modal-titles').textContent = dog.titles || 'Ingen registrerte titler';
 
       document.getElementById('dog-profile-modal').classList.remove('hidden');
     }
@@ -343,10 +450,21 @@
       const name = document.getElementById('dog-name').value;
       const breed = document.getElementById('dog-breed').value;
       const dob = document.getElementById('dog-dob').value || null;
+      const gender = document.getElementById('dog-gender').value;
+      const height = document.getElementById('dog-height').value;
+      const weight = document.getElementById('dog-weight').value;
+      const nkk = document.getElementById('dog-nkk').value;
+      const chip = document.getElementById('dog-chip').value;
+      const pedigree = document.getElementById('dog-pedigree').value;
+      const health = document.getElementById('dog-health').value;
+      const titles = document.getElementById('dog-titles').value;
 
-      const { error } = await supabaseClient.from('dogs').insert([{ name, breed, dob }]);
+      const { error } = await supabaseClient.from('dogs').insert([{ 
+        name, breed, dob, gender, height, weight, nkk, chip, pedigree, health, titles 
+      }]);
+
       if (error) {
-        alert('Feil ved lagring av hund: ' + error.message);
+        alert('Feil ved lagring av hund: ' + error.message + '\n\nMerk: Hvis du ikke har lagt til disse nye kolonnene i Supabase ennå, må du kjøre SQL-kommandoen for å opprette dem i databasen.');
         return;
       }
 
