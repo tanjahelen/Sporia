@@ -5,11 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Sporia</title>
   
-  <!-- PWA & Mobile settings -->
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#ffffff">
   <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-title" content="Sporia">
   <link rel="apple-touch-icon" href="icon-192.png">
 
   <!-- Tailwind CSS + DaisyUI -->
@@ -25,25 +23,24 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
-    body {
-      font-family: 'Inter', sans-serif;
-    }
-    .pb-safe {
-      padding-bottom: env(safe-area-inset-bottom, 12px);
-    }
+    body { font-family: 'Inter', sans-serif; }
+    .pb-safe { padding-bottom: env(safe-area-inset-bottom, 12px); }
   </style>
 </head>
 <body class="bg-slate-50 min-h-screen text-slate-900 pb-24">
 
-  <!-- Top Header -->
+  <!-- Header -->
   <header class="text-center pt-6 pb-2 px-4 max-w-md mx-auto">
     <h1 class="text-2xl font-bold tracking-tight text-slate-900">Sporia</h1>
   </header>
 
+  <!-- Global Feilmelding (vises øverst hvis skriptet krasjer) -->
+  <div id="global-error" class="hidden max-w-md mx-auto m-4 p-4 bg-red-100 border border-red-300 text-red-800 rounded-xl text-xs"></div>
+
   <!-- Hovedinnhold -->
   <main class="max-w-md mx-auto p-4 space-y-6">
     
-    <!-- FANE 1: STARTSIDE (HOME) -->
+    <!-- STARTSIDE -->
     <div id="tab-home" class="tab-content space-y-6">
       <section class="card bg-slate-900 text-white p-6 rounded-2xl shadow-sm">
         <h2 class="text-xl font-bold">Velkommen til Sporia</h2>
@@ -60,9 +57,7 @@
           <h3 class="text-sm font-semibold uppercase tracking-wider text-slate-500">Mine hunder</h3>
           <button onclick="switchTab('dogs')" class="text-xs font-semibold text-pink-600 hover:text-pink-700">Se alle</button>
         </div>
-        <div id="homeDogList" class="flex gap-3 overflow-x-auto pb-2 scrollbar-none">
-          <!-- Hunder legges dynamisk inn her -->
-        </div>
+        <div id="homeDogList" class="flex gap-3 overflow-x-auto pb-2 scrollbar-none"></div>
       </section>
 
       <section class="space-y-2">
@@ -80,7 +75,7 @@
       </section>
     </div>
 
-    <!-- FANE 2: HUNDER -->
+    <!-- HUNDER -->
     <div id="tab-dogs" class="tab-content hidden space-y-6">
       <section class="card bg-white shadow-sm border border-slate-200 p-6 rounded-2xl">
         <h2 class="text-lg font-semibold text-slate-900 mb-4">Legg til ny hund</h2>
@@ -88,7 +83,7 @@
         <form id="dogForm" class="space-y-4">
           <div>
             <label class="label text-xs font-semibold text-slate-600 uppercase">Navn *</label>
-            <input type="text" id="name" required class="input input-bordered w-full rounded-xl focus:outline-none focus:border-pink-600" placeholder="Eks. Bella" />
+            <input type="text" id="name" required class="input input-bordered w-full rounded-xl" placeholder="Eks. Penny" />
           </div>
 
           <div>
@@ -99,37 +94,11 @@
           <div class="grid grid-cols-2 gap-3">
             <div>
               <label class="label text-xs font-semibold text-slate-600 uppercase">Rase</label>
-              <input type="text" id="breed" class="input input-bordered w-full rounded-xl" placeholder="Eks. Golden Retriever" />
+              <input type="text" id="breed" class="input input-bordered w-full rounded-xl" placeholder="Miniature American Shepherd" />
             </div>
             <div>
               <label class="label text-xs font-semibold text-slate-600 uppercase">Vekt (kg)</label>
-              <input type="number" step="0.1" id="weight_kg" class="input input-bordered w-full rounded-xl" placeholder="Eks. 12.5" />
-            </div>
-          </div>
-
-          <div class="grid grid-cols-2 gap-3">
-            <div>
-              <label class="label text-xs font-semibold text-slate-600 uppercase">Fødselsdato</label>
-              <input type="date" id="birth_date" class="input input-bordered w-full rounded-xl" />
-            </div>
-            <div>
-              <label class="label text-xs font-semibold text-slate-600 uppercase">Kjønn</label>
-              <select id="gender" class="select select-bordered w-full rounded-xl">
-                <option value="">Velg...</option>
-                <option value="Han">Han</option>
-                <option value="Hun">Hun</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="grid grid-cols-2 gap-3">
-            <div>
-              <label class="label text-xs font-semibold text-slate-600 uppercase">Chip-nummer</label>
-              <input type="text" id="chip_number" class="input input-bordered w-full rounded-xl" placeholder="Eks. 5780..." />
-            </div>
-            <div>
-              <label class="label text-xs font-semibold text-slate-600 uppercase">Reg. nummer</label>
-              <input type="text" id="reg_number" class="input input-bordered w-full rounded-xl" placeholder="Eks. NO12345/22" />
+              <input type="number" step="0.1" id="weight_kg" class="input input-bordered w-full rounded-xl" />
             </div>
           </div>
 
@@ -137,7 +106,6 @@
             Lagre hund
           </button>
         </form>
-
         <div id="statusMessage" class="hidden mt-4 alert text-sm py-2 rounded-xl"></div>
       </section>
 
@@ -147,7 +115,7 @@
       </section>
     </div>
 
-    <!-- FANE 3: VAKSINE OG HELSELOGG -->
+    <!-- AKTIVITETER -->
     <div id="tab-health" class="tab-content hidden space-y-6">
       <section class="card bg-white shadow-sm border border-slate-200 p-6 rounded-2xl">
         <h2 class="text-lg font-semibold text-slate-900 mb-4">Loggfør aktivitet / vaksine</h2>
@@ -168,6 +136,7 @@
                 <option value="Flått">Flåttbehandling</option>
                 <option value="Veterinær">Veterinærbesøk</option>
                 <option value="Kloklipp">Kloklipp</option>
+                <option value="Rally Trening">Rally Trening</option>
                 <option value="Annet">Annet</option>
               </select>
             </div>
@@ -179,19 +148,18 @@
 
           <div>
             <label class="label text-xs font-semibold text-slate-600 uppercase">Beskrivelse / Tittel *</label>
-            <input type="text" id="log_title" required class="input input-bordered w-full rounded-xl" placeholder="Eks. Årlig vaksine (DHPPI)" />
+            <input type="text" id="log_title" required class="input input-bordered w-full rounded-xl" />
           </div>
 
           <div>
             <label class="label text-xs font-semibold text-slate-600 uppercase">Notater (valgfritt)</label>
-            <textarea id="log_notes" class="textarea textarea-bordered w-full rounded-xl text-sm" placeholder="Eks. Neste dose om 1 år"></textarea>
+            <textarea id="log_notes" class="textarea textarea-bordered w-full rounded-xl text-sm"></textarea>
           </div>
 
           <button type="submit" id="saveLogBtn" class="btn w-full bg-pink-600 hover:bg-pink-700 text-white font-medium rounded-xl border-none mt-2">
             Lagre hendelse
           </button>
         </form>
-
         <div id="healthStatusMessage" class="hidden mt-4 alert text-sm py-2 rounded-xl"></div>
       </section>
 
@@ -203,110 +171,47 @@
 
   </main>
 
-  <!-- Bottom Navigation Bar -->
+  <!-- Meny nederst -->
   <nav class="fixed bottom-0 left-0 right-0 bg-white/80 backdrop-blur-md border-t border-slate-200/80 z-50 pb-safe">
     <div class="max-w-md mx-auto flex justify-around items-center pt-2">
-      <button onclick="switchTab('home')" id="nav-btn-home" class="flex flex-col items-center gap-1 text-pink-600 transition-colors duration-150 py-1 px-4">
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-        </svg>
-        <span class="text-[11px] font-medium tracking-tight">Hjem</span>
+      <button onclick="switchTab('home')" id="nav-btn-home" class="flex flex-col items-center gap-1 text-pink-600 py-1 px-4">
+        <span class="text-xs font-bold">Hjem</span>
       </button>
-
-      <button onclick="switchTab('dogs')" id="nav-btn-dogs" class="flex flex-col items-center gap-1 text-slate-400 hover:text-slate-600 transition-colors duration-150 py-1 px-4">
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-        </svg>
-        <span class="text-[11px] font-medium tracking-tight">Hunder</span>
+      <button onclick="switchTab('dogs')" id="nav-btn-dogs" class="flex flex-col items-center gap-1 text-slate-400 py-1 px-4">
+        <span class="text-xs font-bold">Hunder</span>
       </button>
-
-      <button onclick="switchTab('health')" id="nav-btn-health" class="flex flex-col items-center gap-1 text-slate-400 hover:text-slate-600 transition-colors duration-150 py-1 px-4">
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
-        </svg>
-        <span class="text-[11px] font-medium tracking-tight">Aktiviteter</span>
+      <button onclick="switchTab('health')" id="nav-btn-health" class="flex flex-col items-center gap-1 text-slate-400 py-1 px-4">
+        <span class="text-xs font-bold">Aktiviteter</span>
       </button>
     </div>
   </nav>
 
-  <!-- Modal for Redigering -->
-  <dialog id="editModal" class="modal">
-    <div class="modal-box rounded-2xl bg-white max-w-md">
-      <h3 class="font-bold text-lg text-slate-900 mb-4">Rediger hund</h3>
-      <form id="editDogForm" class="space-y-4">
-        <input type="hidden" id="edit_id" />
-        <input type="hidden" id="edit_existing_image_url" />
-        
-        <div>
-          <label class="label text-xs font-semibold text-slate-600 uppercase">Navn *</label>
-          <input type="text" id="edit_name" required class="input input-bordered w-full rounded-xl" />
-        </div>
-
-        <div>
-          <label class="label text-xs font-semibold text-slate-600 uppercase">Endre bilde</label>
-          <input type="file" id="edit_image_file" accept="image/*" class="file-input file-input-bordered w-full rounded-xl text-sm" />
-        </div>
-
-        <div class="grid grid-cols-2 gap-3">
-          <div>
-            <label class="label text-xs font-semibold text-slate-600 uppercase">Rase</label>
-            <input type="text" id="edit_breed" class="input input-bordered w-full rounded-xl" />
-          </div>
-          <div>
-            <label class="label text-xs font-semibold text-slate-600 uppercase">Vekt (kg)</label>
-            <input type="number" step="0.1" id="edit_weight_kg" class="input input-bordered w-full rounded-xl" />
-          </div>
-        </div>
-
-        <div class="grid grid-cols-2 gap-3">
-          <div>
-            <label class="label text-xs font-semibold text-slate-600 uppercase">Fødselsdato</label>
-            <input type="date" id="edit_birth_date" class="input input-bordered w-full rounded-xl" />
-          </div>
-          <div>
-            <label class="label text-xs font-semibold text-slate-600 uppercase">Kjønn</label>
-            <select id="edit_gender" class="select select-bordered w-full rounded-xl">
-              <option value="">Velg...</option>
-              <option value="Han">Han</option>
-              <option value="Hun">Hun</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="grid grid-cols-2 gap-3">
-          <div>
-            <label class="label text-xs font-semibold text-slate-600 uppercase">Chip-nummer</label>
-            <input type="text" id="edit_chip_number" class="input input-bordered w-full rounded-xl" />
-          </div>
-          <div>
-            <label class="label text-xs font-semibold text-slate-600 uppercase">Reg. nummer</label>
-            <input type="text" id="edit_reg_number" class="input input-bordered w-full rounded-xl" />
-          </div>
-        </div>
-
-        <div class="modal-action">
-          <button type="button" onclick="document.getElementById('editModal').close()" class="btn btn-ghost rounded-xl">Avbryt</button>
-          <button type="submit" class="btn bg-pink-600 hover:bg-pink-700 text-white rounded-xl border-none">Oppdater</button>
-        </div>
-      </form>
-    </div>
-  </dialog>
-
   <script>
+    // Fang opp eventuelle kjørefeil direkte på skjermen
+    window.onerror = function(msg, url, lineNo) {
+      const errBox = document.getElementById('global-error');
+      if (errBox) {
+        errBox.classList.remove('hidden');
+        errBox.innerHTML = `<strong>Feil i skript:</strong> ${msg} (Linje ${lineNo})`;
+      }
+      return false;
+    };
+
     const SUPABASE_URL = 'https://fhorhcvylrrzkstcggcc.supabase.co';
     const SUPABASE_ANON_KEY = 'sb_publishable_SYWW9tfgXUgqBt89h3BjOw_eh_rpw5O';
     
     let supabaseClient;
     try {
       supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-    } catch (err) {
-      console.error('Kunne ikke initialisere Supabase:', err);
+    } catch(e) {
+      console.error(e);
     }
 
     let currentDogs = [];
 
-    const dateElem = document.getElementById('log_event_date');
-    if (dateElem) dateElem.value = new Date().toISOString().split('T')[0];
+    // Sett dagens dato som standard
+    const dateField = document.getElementById('log_event_date');
+    if(dateField) dateField.value = new Date().toISOString().split('T')[0];
 
     function switchTab(tabName) {
       document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('hidden'));
@@ -315,148 +220,129 @@
       const dogsBtn = document.getElementById('nav-btn-dogs');
       const healthBtn = document.getElementById('nav-btn-health');
 
-      const defaultClass = "flex flex-col items-center gap-1 text-slate-400 hover:text-slate-600 transition-colors duration-150 py-1 px-4";
-      const activeClass = "flex flex-col items-center gap-1 text-pink-600 transition-colors duration-150 py-1 px-4";
-
-      if (homeBtn) homeBtn.className = defaultClass;
-      if (dogsBtn) dogsBtn.className = defaultClass;
-      if (healthBtn) healthBtn.className = defaultClass;
+      if (homeBtn) homeBtn.className = "flex flex-col items-center gap-1 text-slate-400 py-1 px-4";
+      if (dogsBtn) dogsBtn.className = "flex flex-col items-center gap-1 text-slate-400 py-1 px-4";
+      if (healthBtn) healthBtn.className = "flex flex-col items-center gap-1 text-slate-400 py-1 px-4";
 
       if (tabName === 'home') {
-        const homeTab = document.getElementById('tab-home');
-        if (homeTab) homeTab.classList.remove('hidden');
-        if (homeBtn) homeBtn.className = activeClass;
+        document.getElementById('tab-home').classList.remove('hidden');
+        if (homeBtn) homeBtn.className = "flex flex-col items-center gap-1 text-pink-600 py-1 px-4";
       } else if (tabName === 'dogs') {
-        const dogsTab = document.getElementById('tab-dogs');
-        if (dogsTab) dogsTab.classList.remove('hidden');
-        if (dogsBtn) dogsBtn.className = activeClass;
+        document.getElementById('tab-dogs').classList.remove('hidden');
+        if (dogsBtn) dogsBtn.className = "flex flex-col items-center gap-1 text-pink-600 py-1 px-4";
       } else if (tabName === 'health') {
-        const healthTab = document.getElementById('tab-health');
-        if (healthTab) healthTab.classList.remove('hidden');
-        if (healthBtn) healthBtn.className = activeClass;
+        document.getElementById('tab-health').classList.remove('hidden');
+        if (healthBtn) healthBtn.className = "flex flex-col items-center gap-1 text-pink-600 py-1 px-4";
         loadHealthLogs();
       }
     }
 
-    async function uploadDogImage(fileInput) {
-      if (!fileInput.files || fileInput.files.length === 0) return null;
-
-      const file = fileInput.files[0];
-      const fileExt = file.name.split('.').pop();
-      const fileName = `${Date.now()}_${Math.random().toString(36).substring(2)}.${fileExt}`;
-
-      const { data, error } = await supabaseClient.storage
-        .from('dog-photos')
-        .upload(fileName, file);
-
-      if (error) throw error;
-
-      const { data: publicUrlData } = supabaseClient.storage
-        .from('dog-photos')
-        .getPublicUrl(fileName);
-
-      return publicUrlData.publicUrl;
-    }
-
     async function loadDogs() {
-      const dogList = document.getElementById('dogList');
-      const homeDogList = document.getElementById('homeDogList');
-      const homeDogCount = document.getElementById('home-dog-count');
-      const logDogSelect = document.getElementById('log_dog_id');
-      
-      try {
-        const { data: dogs, error } = await supabaseClient
-          .from('dogs')
-          .select('*');
-
-        if (error) {
-          console.error('Feil ved henting av hunder:', error);
-          if (dogList) dogList.innerHTML = `<p class="text-xs text-red-500 py-2">Feil: ${error.message}</p>`;
-          return;
-        }
-
-        currentDogs = dogs || [];
-        if (dogList) dogList.innerHTML = '';
-        if (homeDogList) homeDogList.innerHTML = '';
-        if (homeDogCount) homeDogCount.textContent = currentDogs.length;
-        if (logDogSelect) logDogSelect.innerHTML = '<option value="">Velg hund...</option>';
-
-        if (currentDogs.length === 0) {
-          if (dogList) dogList.innerHTML = `<p class="text-sm text-slate-400 text-center py-4">Ingen hunder registrert ennå</p>`;
-          if (homeDogList) homeDogList.innerHTML = `<p class="text-xs text-slate-400 py-2">Ingen hunder lagt til ennå</p>`;
-          return;
-        }
-
-        currentDogs.forEach(dog => {
-          if (logDogSelect) {
-            const option = document.createElement('option');
-            option.value = dog.id;
-            option.textContent = dog.name;
-            logDogSelect.appendChild(option);
-          }
-
-          if (dogList) {
-            const card = document.createElement('div');
-            card.className = 'card bg-white shadow-sm border border-slate-200 p-4 rounded-xl space-y-3';
-
-            const imageHtml = dog.image_url 
-              ? `<img src="${dog.image_url}" alt="${dog.name}" class="w-12 h-12 rounded-full object-cover border border-slate-100 flex-shrink-0" />`
-              : `<div class="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 font-bold text-sm flex-shrink-0">${dog.name.charAt(0).toUpperCase()}</div>`;
-
-            card.innerHTML = `
-              <div class="flex items-center gap-3">
-                ${imageHtml}
-                <div class="flex-grow">
-                  <div class="flex justify-between items-start">
-                    <div>
-                      <h3 class="font-bold text-slate-900 text-base">${dog.name}</h3>
-                      <p class="text-xs text-slate-500 mt-0.5">
-                        ${dog.breed ? dog.breed : 'Ukjent rase'} 
-                        ${dog.gender ? '• ' + dog.gender : ''}
-                      </p>
-                    </div>
-                    ${dog.weight_kg ? `<span class="badge badge-ghost text-xs">${dog.weight_kg} kg</span>` : ''}
-                  </div>
-                </div>
-              </div>
-              
-              <div class="flex justify-end gap-2 pt-2 border-t border-slate-100">
-                <button onclick="openEditModal('${dog.id}')" class="btn btn-xs btn-ghost text-slate-600 hover:bg-slate-100 rounded-lg">Rediger</button>
-                <button onclick="deleteDog('${dog.id}', '${dog.name}')" class="btn btn-xs btn-ghost text-red-600 hover:bg-red-50 rounded-lg">Slett</button>
-              </div>
-            `;
-            dogList.appendChild(card);
-          }
-
-          if (homeDogList) {
-            const miniCard = document.createElement('div');
-            miniCard.className = 'card bg-white border border-slate-200 p-3 rounded-2xl flex-shrink-0 flex flex-col items-center gap-2 w-24 text-center';
-            
-            const miniImageHtml = dog.image_url 
-              ? `<img src="${dog.image_url}" alt="${dog.name}" class="w-10 h-10 rounded-full object-cover border border-slate-100" />`
-              : `<div class="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 font-bold text-xs">${dog.name.charAt(0).toUpperCase()}</div>`;
-
-            miniCard.innerHTML = `
-              ${miniImageHtml}
-              <span class="text-xs font-semibold text-slate-900 truncate w-full">${dog.name}</span>
-            `;
-            homeDogList.appendChild(miniCard);
-          }
-        });
-      } catch (err) {
-        console.error('Kritisk feil ved lasting av hunder:', err);
+      if (!supabaseClient) return;
+      const { data: dogs, error } = await supabaseClient.from('dogs').select('*');
+      if (error) {
+        console.error('Feil ved lasting av hunder:', error.message);
+        return;
       }
+
+      currentDogs = dogs || [];
+      const dogList = document.getElementById('dogList');
+      const logDogSelect = document.getElementById('log_dog_id');
+      const homeDogCount = document.getElementById('home-dog-count');
+      
+      if (homeDogCount) homeDogCount.textContent = currentDogs.length;
+      if (logDogSelect) logDogSelect.innerHTML = '<option value="">Velg hund...</option>';
+      if (dogList) dogList.innerHTML = '';
+
+      if (currentDogs.length === 0 && dogList) {
+        dogList.innerHTML = `<p class="text-sm text-slate-400 text-center py-4">Ingen hunder registrert ennå</p>`;
+        return;
+      }
+
+      currentDogs.forEach(dog => {
+        if (logDogSelect) {
+          const opt = document.createElement('option');
+          opt.value = dog.id;
+          opt.textContent = dog.name;
+          logDogSelect.appendChild(opt);
+        }
+        if (dogList) {
+          const d = document.createElement('div');
+          d.className = 'p-3 bg-white rounded-xl border border-slate-200 flex justify-between items-center';
+          d.innerHTML = `<span class="font-bold">${dog.name}</span><span class="text-xs text-slate-400">${dog.breed || ''}</span>`;
+          dogList.appendChild(d);
+        }
+      });
     }
 
+    async function loadHealthLogs() {
+      if (!supabaseClient) return;
+      const { data: logs, error } = await supabaseClient.from('health_logs').select('*, dogs(name)').order('event_date', { ascending: false });
+      const healthLogList = document.getElementById('healthLogList');
+      if (!healthLogList) return;
+      
+      if (error) {
+        healthLogList.innerHTML = `<p class="text-xs text-red-500">Feil ved lasting av logg: ${error.message}</p>`;
+        return;
+      }
+      
+      healthLogList.innerHTML = '';
+      if (!logs || logs.length === 0) {
+        healthLogList.innerHTML = `<p class="text-sm text-slate-400 text-center py-4">Ingen hendelser loggført ennå</p>`;
+        return;
+      }
+
+      logs.forEach(log => {
+        const item = document.createElement('div');
+        item.className = 'p-3 bg-white rounded-xl border border-slate-200 space-y-1';
+        item.innerHTML = `
+          <div class="flex justify-between text-xs font-bold text-slate-700">
+            <span>${log.title} (${log.category})</span>
+            <span>${log.event_date}</span>
+          </div>
+          <p class="text-xs text-slate-500">Hund: ${log.dogs ? log.dogs.name : 'Ukjent'}</p>
+        `;
+        healthLogList.appendChild(item);
+      });
+    }
+
+    // Håndter lagring av ny hund
+    const dogForm = document.getElementById('dogForm');
+    if (dogForm) {
+      dogForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const statusMsg = document.getElementById('statusMessage');
+        
+        try {
+          const newDog = {
+            name: document.getElementById('name').value,
+            breed: document.getElementById('breed').value || null,
+            weight_kg: document.getElementById('weight_kg').value ? parseFloat(document.getElementById('weight_kg').value) : null
+          };
+
+          const { error } = await supabaseClient.from('dogs').insert([newDog]);
+          if (error) throw error;
+
+          statusMsg.className = 'mt-4 alert alert-success text-sm py-2 rounded-xl text-slate-800 bg-emerald-50 border border-emerald-200';
+          statusMsg.textContent = `${newDog.name} ble lagret!`;
+          statusMsg.classList.remove('hidden');
+
+          dogForm.reset();
+          await loadDogs();
+        } catch (err) {
+          statusMsg.className = 'mt-4 alert alert-error text-sm py-2 rounded-xl text-white bg-red-500';
+          statusMsg.textContent = 'Feil ved lagring: ' + err.message;
+          statusMsg.classList.remove('hidden');
+        }
+      });
+    }
+
+    // Håndter lagring av helselogg
     const healthForm = document.getElementById('healthForm');
     if (healthForm) {
       healthForm.addEventListener('submit', async (e) => {
         e.preventDefault();
-
-        const saveLogBtn = document.getElementById('saveLogBtn');
-        const healthStatusMessage = document.getElementById('healthStatusMessage');
-        saveLogBtn.disabled = true;
-        saveLogBtn.textContent = 'Lagrer...';
+        const healthStatusMsg = document.getElementById('healthStatusMessage');
 
         try {
           const newLog = {
@@ -467,236 +353,25 @@
             notes: document.getElementById('log_notes').value || null
           };
 
-          const { error } = await supabaseClient
-            .from('health_logs')
-            .insert([newLog]);
-
+          const { error } = await supabaseClient.from('health_logs').insert([newLog]);
           if (error) throw error;
 
-          healthStatusMessage.className = 'mt-4 alert alert-success text-sm py-2 rounded-xl text-slate-800 bg-emerald-50 border border-emerald-200';
-          healthStatusMessage.textContent = 'Hendelse ble lagret.';
-          healthStatusMessage.classList.remove('hidden');
+          healthStatusMsg.className = 'mt-4 alert alert-success text-sm py-2 rounded-xl text-slate-800 bg-emerald-50 border border-emerald-200';
+          healthStatusMsg.textContent = 'Hendelse lagret!';
+          healthStatusMsg.classList.remove('hidden');
 
           healthForm.reset();
           document.getElementById('log_event_date').value = new Date().toISOString().split('T')[0];
-          
           await loadHealthLogs();
         } catch (err) {
-          healthStatusMessage.className = 'mt-4 alert alert-error text-sm py-2 rounded-xl text-white';
-          healthStatusMessage.textContent = 'Det oppstod en feil: ' + err.message;
-          healthStatusMessage.classList.remove('hidden');
-        } finally {
-          saveLogBtn.disabled = false;
-          saveLogBtn.textContent = 'Lagre hendelse';
+          healthStatusMsg.className = 'mt-4 alert alert-error text-sm py-2 rounded-xl text-white bg-red-500';
+          healthStatusMsg.textContent = 'Feil ved lagring: ' + err.message;
+          healthStatusMsg.classList.remove('hidden');
         }
       });
     }
 
-    async function loadHealthLogs() {
-      const healthLogList = document.getElementById('healthLogList');
-      if (!healthLogList) return;
-
-      try {
-        const { data: logs, error } = await supabaseClient
-          .from('health_logs')
-          .select('*, dogs(name)')
-          .order('event_date', { ascending: false });
-
-        if (error) {
-          healthLogList.innerHTML = `<p class="text-sm text-red-500 text-center py-4">Feil ved henting: ${error.message}</p>`;
-          return;
-        }
-
-        healthLogList.innerHTML = '';
-
-        if (!logs || logs.length === 0) {
-          healthLogList.innerHTML = `<p class="text-sm text-slate-400 text-center py-4">Ingen hendelser loggført ennå</p>`;
-          return;
-        }
-
-        logs.forEach(log => {
-          const card = document.createElement('div');
-          card.className = 'card bg-white shadow-sm border border-slate-200 p-4 rounded-xl space-y-2';
-          
-          const dogName = log.dogs ? log.dogs.name : 'Ukjent hund';
-
-          card.innerHTML = `
-            <div class="flex justify-between items-start">
-              <div>
-                <div class="flex items-center gap-2">
-                  <span class="badge bg-pink-50 text-pink-700 border-none text-[11px] font-semibold">${log.category}</span>
-                  <span class="text-xs font-semibold text-slate-500">${dogName}</span>
-                </div>
-                <h3 class="font-bold text-slate-900 text-sm mt-1">${log.title}</h3>
-              </div>
-              <span class="text-xs text-slate-400 font-medium">${log.event_date}</span>
-            </div>
-
-            ${log.notes ? `<p class="text-xs text-slate-600 bg-slate-50 p-2.5 rounded-lg border border-slate-100 mt-1">${log.notes}</p>` : ''}
-
-            <div class="flex justify-end pt-1">
-              <button onclick="deleteHealthLog('${log.id}')" class="btn btn-xs btn-ghost text-red-600 hover:bg-red-50 rounded-lg">Slett</button>
-            </div>
-          `;
-          healthLogList.appendChild(card);
-        });
-      } catch (err) {
-        console.error('Feil ved henting av logg:', err);
-      }
-    }
-
-    async function deleteHealthLog(id) {
-      if (!confirm('Er du sikker på at du vil slette denne hendelsen?')) return;
-
-      const { error } = await supabaseClient
-        .from('health_logs')
-        .delete()
-        .eq('id', id);
-
-      if (error) {
-        alert('Feil ved sletting: ' + error.message);
-      } else {
-        await loadHealthLogs();
-      }
-    }
-
-    const dogForm = document.getElementById('dogForm');
-    if (dogForm) {
-      dogForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-
-        const saveBtn = document.getElementById('saveBtn');
-        const statusMessage = document.getElementById('statusMessage');
-        saveBtn.disabled = true;
-        saveBtn.textContent = 'Lagrer...';
-
-        try {
-          const fileInput = document.getElementById('image_file');
-          let imageUrl = null;
-
-          if (fileInput.files.length > 0) {
-            imageUrl = await uploadDogImage(fileInput);
-          }
-
-          const newDog = {
-            name: document.getElementById('name').value,
-            breed: document.getElementById('breed').value || null,
-            weight_kg: document.getElementById('weight_kg').value ? parseFloat(document.getElementById('weight_kg').value) : null,
-            birth_date: document.getElementById('birth_date').value || null,
-            gender: document.getElementById('gender').value || null,
-            chip_number: document.getElementById('chip_number').value || null,
-            reg_number: document.getElementById('reg_number').value || null,
-            image_url: imageUrl
-          };
-
-          const { error } = await supabaseClient
-            .from('dogs')
-            .insert([newDog]);
-
-          if (error) throw error;
-
-          statusMessage.className = 'mt-4 alert alert-success text-sm py-2 rounded-xl text-slate-800 bg-emerald-50 border border-emerald-200';
-          statusMessage.textContent = `${newDog.name} ble lagret.`;
-          statusMessage.classList.remove('hidden');
-          
-          dogForm.reset();
-          await loadDogs();
-        } catch (err) {
-          statusMessage.className = 'mt-4 alert alert-error text-sm py-2 rounded-xl text-white';
-          statusMessage.textContent = 'Det oppstod en feil: ' + err.message;
-          statusMessage.classList.remove('hidden');
-        } finally {
-          saveBtn.disabled = false;
-          saveBtn.textContent = 'Lagre hund';
-        }
-      });
-    }
-
-    async function deleteDog(id, name) {
-      if (!confirm(`Er du sikker på at du vil slette ${name}?`)) return;
-
-      const { error } = await supabaseClient
-        .from('dogs')
-        .delete()
-        .eq('id', id);
-
-      if (error) {
-        alert('Feil ved sletting: ' + error.message);
-      } else {
-        await loadDogs();
-      }
-    }
-
-    function openEditModal(id) {
-      const dog = currentDogs.find(d => String(d.id) === String(id));
-      if (!dog) return;
-
-      document.getElementById('edit_id').value = dog.id;
-      document.getElementById('edit_existing_image_url').value = dog.image_url || '';
-      document.getElementById('edit_name').value = dog.name || '';
-      document.getElementById('edit_breed').value = dog.breed || '';
-      document.getElementById('edit_weight_kg').value = dog.weight_kg || '';
-      document.getElementById('edit_birth_date').value = dog.birth_date || '';
-      document.getElementById('edit_gender').value = dog.gender || '';
-      document.getElementById('edit_chip_number').value = dog.chip_number || '';
-      document.getElementById('edit_reg_number').value = dog.reg_number || '';
-
-      document.getElementById('edit_image_file').value = '';
-
-      document.getElementById('editModal').showModal();
-    }
-
-    const editDogForm = document.getElementById('editDogForm');
-    if (editDogForm) {
-      editDogForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-
-        const id = document.getElementById('edit_id').value;
-        const existingImageUrl = document.getElementById('edit_existing_image_url').value;
-        const fileInput = document.getElementById('edit_image_file');
-
-        try {
-          let imageUrl = existingImageUrl || null;
-
-          if (fileInput.files && fileInput.files.length > 0) {
-            imageUrl = await uploadDogImage(fileInput);
-          }
-
-          const updatedDog = {
-            name: document.getElementById('edit_name').value,
-            breed: document.getElementById('breed').value || null,
-            weight_kg: document.getElementById('edit_weight_kg').value ? parseFloat(document.getElementById('edit_weight_kg').value) : null,
-            birth_date: document.getElementById('edit_birth_date').value || null,
-            gender: document.getElementById('edit_gender').value || null,
-            chip_number: document.getElementById('edit_chip_number').value || null,
-            reg_number: document.getElementById('edit_reg_number').value || null,
-            image_url: imageUrl
-          };
-
-          const { error } = await supabaseClient
-            .from('dogs')
-            .update(updatedDog)
-            .eq('id', id);
-
-          if (error) throw error;
-
-          document.getElementById('editModal').close();
-          await loadDogs();
-        } catch (err) {
-          alert('Feil ved oppdatering: ' + err.message);
-        }
-      });
-    }
-
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js')
-          .then((reg) => console.log('Service Worker registrert:', reg.scope))
-          .catch((err) => console.log('Service Worker-feil:', err));
-      });
-    }
-
-    // Tving startfane og laste inn data ved oppstart
+    // Kjør oppstart
     switchTab('home');
     loadDogs();
   </script>
