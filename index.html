@@ -96,7 +96,7 @@
       <!-- Profile Header -->
       <div class="flex items-center justify-between border-b border-gray-200/60 pb-4">
         <div class="flex items-center space-x-3">
-          <div id="profile-modal-avatar-container" class="w-14 h-14 rounded-full bg-appleBlue text-white flex items-center justify-center font-bold text-xl shadow-sm overflow-hidden">
+          <div id="profile-modal-avatar-container" class="w-14 h-14 rounded-full bg-appleBlue text-white flex items-center justify-center font-bold text-xl shadow-sm overflow-hidden ring-2 ring-white">
             <span id="profile-modal-avatar-text">H</span>
             <img id="profile-modal-avatar-img" src="" class="w-full h-full object-cover hidden" alt="Hundebilde">
           </div>
@@ -215,8 +215,8 @@
           <input type="text" id="dog-breed" required class="w-full px-3.5 py-2 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-appleBlue bg-white text-sm" placeholder="F.eks. Miniature American Shepherd">
         </div>
         <div>
-          <label class="block text-xs font-medium text-appleSub mb-1">Bilde-URL (eller lenke til bilde)</label>
-          <input type="url" id="dog-image" class="w-full px-3.5 py-2 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-appleBlue bg-white text-sm" placeholder="https://eksempel.no/bilde.jpg">
+          <label class="block text-xs font-medium text-appleSub mb-1">Profilbilde (Last opp bilde)</label>
+          <input type="file" id="dog-image-file" accept="image/*" class="w-full text-xs text-appleSub file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-appleBlue file:text-white hover:file:bg-appleBlueHover cursor-pointer">
         </div>
         <div class="grid grid-cols-2 gap-2">
           <div>
@@ -364,7 +364,7 @@
 
       headerContainer.innerHTML = cachedDogs.map(dog => {
         const avatarContent = dog.image 
-          ? `<img src="${escapeHtml(dog.image)}" class="w-full h-full object-cover" alt="${escapeHtml(dog.name)}">`
+          ? `<img src="${dog.image}" class="w-full h-full object-cover" alt="${escapeHtml(dog.name)}">`
           : `<span>${dog.name.charAt(0).toUpperCase()}</span>`;
 
         return `
@@ -486,7 +486,7 @@
       document.getElementById('dog-name').value = dog.name || '';
       document.getElementById('dog-reg-name').value = dog.reg_name || '';
       document.getElementById('dog-breed').value = dog.breed || '';
-      document.getElementById('dog-image').value = dog.image || '';
+      document.getElementById('dog-image-file').value = ''; // Nullstill filvelger
       document.getElementById('dog-dob').value = dog.dob || '';
       document.getElementById('dog-gender').value = dog.gender || 'Tispe';
       document.getElementById('dog-height').value = dog.height || '';
@@ -497,7 +497,6 @@
       document.getElementById('dog-health').value = dog.health || '';
       document.getElementById('dog-titles').value = dog.titles || '';
 
-      document.getElementById('dog-modal').classList.add('hidden'); // Bare for sikkerhets skyld
       setTimeout(() => {
         document.getElementById('dog-modal').classList.remove('hidden');
       }, 100);
@@ -515,7 +514,6 @@
       const name = document.getElementById('dog-name').value;
       const reg_name = document.getElementById('dog-reg-name').value;
       const breed = document.getElementById('dog-breed').value;
-      const image = document.getElementById('dog-image').value;
       const dob = document.getElementById('dog-dob').value || null;
       const gender = document.getElementById('dog-gender').value;
       const height = document.getElementById('dog-height').value;
@@ -526,8 +524,28 @@
       const health = document.getElementById('dog-health').value;
       const titles = document.getElementById('dog-titles').value;
 
-      const payload = { name, reg_name, breed, image, dob, gender, height, weight, nkk, chip, pedigree, health, titles };
+      const fileInput = document.getElementById('dog-image-file');
+      
+      let image = null;
+      if (editId) {
+        const existingDog = cachedDogs.find(d => d.id === editId);
+        if (existingDog) image = existingDog.image;
+      }
 
+      if (fileInput.files && fileInput.files[0]) {
+        const file = fileInput.files[0];
+        const reader = new FileReader();
+        reader.onload = async function(uploadEvent) {
+          image = uploadEvent.target.result;
+          await saveDogDataToSupabase(editId, { name, reg_name, breed, image, dob, gender, height, weight, nkk, chip, pedigree, health, titles });
+        };
+        reader.readAsDataURL(file);
+      } else {
+        await saveDogDataToSupabase(editId, { name, reg_name, breed, image, dob, gender, height, weight, nkk, chip, pedigree, health, titles });
+      }
+    }
+
+    async function saveDogDataToSupabase(editId, payload) {
       let error;
       if (editId) {
         const res = await supabaseClient.from('dogs').update(payload).eq('id', editId);
@@ -538,7 +556,7 @@
       }
 
       if (error) {
-        alert('Feil ved lagring av hund: ' + error.message + '\n\nMerk: Hvis du ikke har lagt til nye kolonner (som reg_name, image) i Supabase ennå, må du kjøre SQL-kommandoen for å opprette dem.');
+        alert('Feil ved lagring av hund: ' + error.message);
         return;
       }
 
