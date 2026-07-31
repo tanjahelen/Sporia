@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Sporia – Hundehelse & Logg</title>
+  <title>Sporia – Hundehelse, Trening & Logg</title>
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Supabase JS SDK -->
@@ -72,18 +72,55 @@
   <!-- MAIN CONTENT CONTAINER -->
   <main class="flex-1 max-w-xl w-full mx-auto p-4 space-y-6">
 
-    <!-- HEALTH LOGS SECTION -->
-    <section class="glass-card rounded-2xl p-5 shadow-sm border border-gray-100 space-y-4">
-      <div class="flex items-center justify-between">
-        <h2 class="text-base font-semibold text-appleText">Siste helselogger</h2>
-        <button onclick="openAddLogModal()" class="text-xs font-medium bg-appleBlue text-white px-3 py-1.5 rounded-full hover:bg-appleBlueHover transition active:scale-95 shadow-sm">
-          <i class="fa-solid fa-plus mr-1"></i> Ny logg
-        </button>
+    <!-- TAB SWITCHER (Helse vs Trening) -->
+    <div class="flex rounded-xl bg-gray-200/70 p-1 text-xs font-medium">
+      <button onclick="switchTab('health')" id="tab-health-btn" class="flex-1 py-2 rounded-lg bg-white shadow-xs text-appleText transition">Helse & Logg</button>
+      <button onclick="switchTab('training')" id="tab-training-btn" class="flex-1 py-2 rounded-lg text-appleSub transition">Trening & Resultater</button>
+    </div>
+
+    <!-- SEKTION: HELSE & GENERELLE LOGGER -->
+    <section id="section-health" class="space-y-6">
+      <div class="glass-card rounded-2xl p-5 shadow-sm border border-gray-100 space-y-4">
+        <div class="flex items-center justify-between">
+          <h2 class="text-base font-semibold text-appleText">Siste helselogger</h2>
+          <button onclick="openAddLogModal()" class="text-xs font-medium bg-appleBlue text-white px-3 py-1.5 rounded-full hover:bg-appleBlueHover transition active:scale-95 shadow-sm">
+            <i class="fa-solid fa-plus mr-1"></i> Ny logg
+          </button>
+        </div>
+        
+        <!-- Logs List -->
+        <div id="logs-container" class="space-y-3">
+          <div class="text-center py-6 text-appleSub text-sm">Laster logger...</div>
+        </div>
       </div>
-      
-      <!-- Logs List -->
-      <div id="logs-container" class="space-y-3">
-        <div class="text-center py-6 text-appleSub text-sm">Laster logger...</div>
+    </section>
+
+    <!-- SEKTION: TRENING & RESULTATER -->
+    <section id="section-training" class="space-y-6 hidden">
+      <!-- Treningsøkter -->
+      <div class="glass-card rounded-2xl p-5 shadow-sm border border-gray-100 space-y-4">
+        <div class="flex items-center justify-between">
+          <h2 class="text-base font-semibold text-appleText">Treningsøkter</h2>
+          <button onclick="openAddTrainingModal()" class="text-xs font-medium bg-appleBlue text-white px-3 py-1.5 rounded-full hover:bg-appleBlueHover transition active:scale-95 shadow-sm">
+            <i class="fa-solid fa-plus mr-1"></i> Ny økt
+          </button>
+        </div>
+        <div id="training-container" class="space-y-3">
+          <div class="text-center py-4 text-appleSub text-xs">Laster treningsøkter...</div>
+        </div>
+      </div>
+
+      <!-- Konkurranser & Utstillinger -->
+      <div class="glass-card rounded-2xl p-5 shadow-sm border border-gray-100 space-y-4">
+        <div class="flex items-center justify-between">
+          <h2 class="text-base font-semibold text-appleText">Konkurranser & Utstillinger</h2>
+          <button onclick="openAddCompetitionModal()" class="text-xs font-medium bg-appleBlue text-white px-3 py-1.5 rounded-full hover:bg-appleBlueHover transition active:scale-95 shadow-sm">
+            <i class="fa-solid fa-plus mr-1"></i> Nytt resultat
+          </button>
+        </div>
+        <div id="competition-container" class="space-y-3">
+          <div class="text-center py-4 text-appleSub text-xs">Laster resultater...</div>
+        </div>
       </div>
     </section>
 
@@ -113,8 +150,6 @@
 
       <!-- Detailed Info Grid -->
       <div class="space-y-4 text-sm">
-        
-        <!-- Generell info -->
         <div class="bg-white/60 p-4 rounded-xl border border-gray-100 space-y-2.5">
           <h4 class="text-xs font-bold text-appleSub uppercase tracking-wider">Generelt</h4>
           <div class="flex justify-between py-1 border-b border-gray-100">
@@ -143,7 +178,6 @@
           </div>
         </div>
 
-        <!-- Offisiell info & ID -->
         <div class="bg-white/60 p-4 rounded-xl border border-gray-100 space-y-2.5">
           <h4 class="text-xs font-bold text-appleSub uppercase tracking-wider">Registrering & ID</h4>
           <div class="flex justify-between py-1 border-b border-gray-100">
@@ -160,7 +194,6 @@
           </div>
         </div>
 
-        <!-- Helse & Helsehistorikk -->
         <div class="bg-white/60 p-4 rounded-xl border border-gray-100 space-y-2.5">
           <h4 class="text-xs font-bold text-appleSub uppercase tracking-wider">Helse & Status</h4>
           <div class="flex justify-between py-1 border-b border-gray-100">
@@ -172,7 +205,6 @@
             <span id="profile-modal-titles" class="font-medium text-appleText">-</span>
           </div>
         </div>
-
       </div>
 
       <!-- Actions -->
@@ -299,6 +331,86 @@
     </div>
   </div>
 
+  <!-- MODAL: ADD TRAINING SESSION -->
+  <div id="training-modal" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
+    <div class="glass-card w-full sm:max-w-md rounded-t-3xl sm:rounded-2xl p-6 shadow-2xl border border-gray-200 space-y-4 animate-in fade-in slide-in-from-bottom duration-200">
+      <div class="flex items-center justify-between">
+        <h3 class="text-lg font-semibold text-appleText">Ny treningsøkt</h3>
+        <button onclick="closeAddTrainingModal()" class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-appleSub hover:bg-gray-200">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <form id="training-form" onsubmit="handleTrainingSubmit(event)" class="space-y-4 text-sm">
+        <div>
+          <label class="block text-xs font-medium text-appleSub mb-1">Velg hund</label>
+          <select id="training-dog-select" required class="w-full px-3.5 py-2 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-appleBlue bg-white text-sm">
+            <option value="">Laster hunder...</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-appleSub mb-1">Aktivitet / Gren</label>
+          <input type="text" id="training-activity" required class="w-full px-3.5 py-2 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-appleBlue bg-white text-sm" placeholder="F.eks. Rallylydighet (Klasse 1)">
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-appleSub mb-1">Fokus / Moment / Øvelser</label>
+          <input type="text" id="training-focus" class="w-full px-3.5 py-2 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-appleBlue bg-white text-sm" placeholder="F.eks. Sitt og bli, slalåm, fristativ">
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-appleSub mb-1">Belønning & Mestring</label>
+          <input type="text" id="training-reward" class="w-full px-3.5 py-2 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-appleBlue bg-white text-sm" placeholder="F.eks. Ballbelønning, kjempegod kontakt">
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-appleSub mb-1">Notater</label>
+          <textarea id="training-notes" rows="2" class="w-full px-3.5 py-2 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-appleBlue bg-white text-sm" placeholder="Hvordan gikk økten?"></textarea>
+        </div>
+        <button type="submit" class="w-full py-3 bg-appleBlue text-white font-medium rounded-xl hover:bg-appleBlueHover transition shadow-sm active:scale-98">
+          Lagre treningsøkt
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: ADD COMPETITION RESULT -->
+  <div id="competition-modal" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
+    <div class="glass-card w-full sm:max-w-md rounded-t-3xl sm:rounded-2xl p-6 shadow-2xl border border-gray-200 space-y-4 animate-in fade-in slide-in-from-bottom duration-200">
+      <div class="flex items-center justify-between">
+        <h3 class="text-lg font-semibold text-appleText">Nytt resultat / Konkurranse</h3>
+        <button onclick="closeAddCompetitionModal()" class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-appleSub hover:bg-gray-200">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <form id="competition-form" onsubmit="handleCompetitionSubmit(event)" class="space-y-4 text-sm">
+        <div>
+          <label class="block text-xs font-medium text-appleSub mb-1">Velg hund</label>
+          <select id="competition-dog-select" required class="w-full px-3.5 py-2 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-appleBlue bg-white text-sm">
+            <option value="">Laster hunder...</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-appleSub mb-1">Arrangement / Konkurranse</label>
+          <input type="text" id="competition-title" required class="w-full px-3.5 py-2 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-appleBlue bg-white text-sm" placeholder="F.eks. Rallylydighet Debut / Lofotutstillingen">
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block text-xs font-medium text-appleSub mb-1">Plassering / Resultat</label>
+            <input type="text" id="competition-placement" class="w-full px-3.5 py-2 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-appleBlue bg-white text-sm" placeholder="F.eks. 3. plass / 1. premie">
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-appleSub mb-1">Poeng / Bedømmelse</label>
+            <input type="text" id="competition-score" class="w-full px-3.5 py-2 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-appleBlue bg-white text-sm" placeholder="F.eks. 195 poeng / Excellent">
+          </div>
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-appleSub mb-1">Dommerkommentarer / Notater</label>
+          <textarea id="competition-notes" rows="2" class="w-full px-3.5 py-2 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-appleBlue bg-white text-sm" placeholder="Dommerens ord og inntrykk..."></textarea>
+        </div>
+        <button type="submit" class="w-full py-3 bg-appleBlue text-white font-medium rounded-xl hover:bg-appleBlueHover transition shadow-sm active:scale-98">
+          Lagre resultat
+        </button>
+      </form>
+    </div>
+  </div>
+
   <!-- NAVIGATION BAR (Mobile Style) -->
   <nav class="fixed bottom-0 left-0 right-0 glass-card border-t border-gray-200/60 py-2.5 px-6 flex justify-around items-center z-40 max-w-xl mx-auto">
     <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="flex flex-col items-center text-appleBlue">
@@ -333,14 +445,35 @@
       loadData();
     });
 
+    function switchTab(tab) {
+      const healthBtn = document.getElementById('tab-health-btn');
+      const trainingBtn = document.getElementById('tab-training-btn');
+      const healthSection = document.getElementById('section-health');
+      const trainingSection = document.getElementById('section-training');
+
+      if (tab === 'health') {
+        healthBtn.className = 'flex-1 py-2 rounded-lg bg-white shadow-xs text-appleText transition';
+        trainingBtn.className = 'flex-1 py-2 rounded-lg text-appleSub transition';
+        healthSection.classList.remove('hidden');
+        trainingSection.classList.add('hidden');
+      } else {
+        trainingBtn.className = 'flex-1 py-2 rounded-lg bg-white shadow-xs text-appleText transition';
+        healthBtn.className = 'flex-1 py-2 rounded-lg text-appleSub transition';
+        trainingSection.classList.remove('hidden');
+        healthSection.classList.add('hidden');
+      }
+    }
+
     async function loadData() {
       if (!supabaseClient) return;
-      await Promise.all([fetchDogs(), fetchLogs()]);
+      await Promise.all([fetchDogs(), fetchLogs(), fetchTraining(), fetchCompetitions()]);
     }
 
     async function fetchDogs() {
       const headerContainer = document.getElementById('header-dogs-container');
-      const select = document.getElementById('log-dog-select');
+      const selectLog = document.getElementById('log-dog-select');
+      const selectTraining = document.getElementById('training-dog-select');
+      const selectCompetition = document.getElementById('competition-dog-select');
       
       const { data, error } = await supabaseClient.from('dogs').select('*').order('created_at', { ascending: false });
       
@@ -358,7 +491,10 @@
             <span>Legg til hund</span>
           </button>
         `;
-        select.innerHTML = `<option value="">Ingen hunder tilgjengelig</option>`;
+        const noDogOpt = `<option value="">Ingen hunder tilgjengelig</option>`;
+        selectLog.innerHTML = noDogOpt;
+        selectTraining.innerHTML = noDogOpt;
+        selectCompetition.innerHTML = noDogOpt;
         return;
       }
 
@@ -384,26 +520,24 @@
         </button>
       `;
 
-      select.innerHTML = '<option value="">Velg hund...</option>' + cachedDogs.map(dog => `
+      const optionsHtml = '<option value="">Velg hund...</option>' + cachedDogs.map(dog => `
         <option value="${dog.id}">${escapeHtml(dog.name)}</option>
       `).join('');
+
+      selectLog.innerHTML = optionsHtml;
+      selectTraining.innerHTML = optionsHtml;
+      selectCompetition.innerHTML = optionsHtml;
     }
 
     async function fetchLogs() {
       const container = document.getElementById('logs-container');
-      
       const { data, error } = await supabaseClient
         .from('health_logs')
         .select('*, dogs(name)')
         .order('created_at', { ascending: false })
         .limit(10);
       
-      if (error) {
-        container.innerHTML = `<div class="text-center py-4 text-rose-500 text-xs">Kunne ikke laste logger</div>`;
-        return;
-      }
-
-      if (!data || data.length === 0) {
+      if (error || !data || data.length === 0) {
         container.innerHTML = `<div class="text-center py-4 text-appleSub text-xs">Ingen helselogger registrert ennå.</div>`;
         return;
       }
@@ -420,6 +554,61 @@
       `).join('');
     }
 
+    async function fetchTraining() {
+      const container = document.getElementById('training-container');
+      const { data, error } = await supabaseClient
+        .from('training_logs')
+        .select('*, dogs(name)')
+        .order('created_at', { ascending: false })
+        .limit(10);
+      
+      if (error || !data || data.length === 0) {
+        container.innerHTML = `<div class="text-center py-4 text-appleSub text-xs">Ingen treningsøkter registrert ennå.</div>`;
+        return;
+      }
+
+      container.innerHTML = data.map(t => `
+        <div class="p-3 rounded-xl bg-white/60 border border-gray-100 shadow-2xs space-y-1">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-semibold text-appleBlue">${escapeHtml(t.dogs?.name || 'Ukjent')} – ${escapeHtml(t.activity)}</span>
+            <span class="text-[10px] text-appleSub">${new Date(t.created_at).toLocaleDateString('no-NO')}</span>
+          </div>
+          ${t.focus ? `<p class="text-xs font-medium text-appleText"><span class="text-appleSub">Fokus:</span> ${escapeHtml(t.focus)}</p>` : ''}
+          ${t.reward ? `<p class="text-xs text-appleSub"><span class="font-medium">Belønning:</span> ${escapeHtml(t.reward)}</p>` : ''}
+          ${t.notes ? `<p class="text-xs text-appleSub italic">${escapeHtml(t.notes)}</p>` : ''}
+        </div>
+      `).join('');
+    }
+
+    async function fetchCompetitions() {
+      const container = document.getElementById('competition-container');
+      const { data, error } = await supabaseClient
+        .from('competitions')
+        .select('*, dogs(name)')
+        .order('created_at', { ascending: false })
+        .limit(10);
+      
+      if (error || !data || data.length === 0) {
+        container.innerHTML = `<div class="text-center py-4 text-appleSub text-xs">Ingen konkurranser eller resultater registrert ennå.</div>`;
+        return;
+      }
+
+      container.innerHTML = data.map(c => `
+        <div class="p-3 rounded-xl bg-white/60 border border-gray-100 shadow-2xs space-y-1">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-semibold text-appleBlue">${escapeHtml(c.dogs?.name || 'Ukjent')}</span>
+            <span class="text-[10px] text-appleSub">${new Date(c.created_at).toLocaleDateString('no-NO')}</span>
+          </div>
+          <h4 class="text-sm font-medium text-appleText">${escapeHtml(c.title)}</h4>
+          <div class="flex space-x-3 text-xs">
+            ${c.placement ? `<span class="font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded">${escapeHtml(c.placement)}</span>` : ''}
+            ${c.score ? `<span class="font-medium text-appleSub">${escapeHtml(c.score)}</span>` : ''}
+          </div>
+          ${c.notes ? `<p class="text-xs text-appleSub">${escapeHtml(c.notes)}</p>` : ''}
+        </div>
+      `).join('');
+    }
+
     function openDogProfile(dogId) {
       const dog = cachedDogs.find(d => d.id === dogId);
       if (!dog) return;
@@ -429,7 +618,6 @@
       document.getElementById('profile-modal-reg-name').textContent = dog.reg_name || 'Ingen registrert navn';
       document.getElementById('profile-modal-breed').textContent = dog.breed || 'Ukjent rase';
 
-      // Avatar bilde eller bokstav
       const avatarImg = document.getElementById('profile-modal-avatar-img');
       const avatarText = document.getElementById('profile-modal-avatar-text');
       if (dog.image) {
@@ -442,21 +630,16 @@
         avatarText.textContent = dog.name.charAt(0).toUpperCase();
       }
 
-      // Detaljerte felt
       document.getElementById('profile-modal-val-name').textContent = dog.name || '-';
       document.getElementById('profile-modal-val-reg-name').textContent = dog.reg_name || 'Ikke oppgitt';
       document.getElementById('profile-modal-dob').textContent = dog.dob ? new Date(dog.dob).toLocaleDateString('no-NO') : 'Ikke oppgitt';
       document.getElementById('profile-modal-breed-val').textContent = dog.breed || 'Ikke oppgitt';
       document.getElementById('profile-modal-gender').textContent = dog.gender || 'Ikke oppgitt';
-      
-      const height = dog.height || '-';
-      const weight = dog.weight || '-';
-      document.getElementById('profile-modal-size').textContent = `${height} / ${weight}`;
+      document.getElementById('profile-modal-size').textContent = `${dog.height || '-'} / ${dog.weight || '-'}`;
 
       document.getElementById('profile-modal-nkk').textContent = dog.nkk || 'Ikke oppgitt';
       document.getElementById('profile-modal-chip').textContent = dog.chip || 'Ikke oppgitt';
       document.getElementById('profile-modal-pedigree').textContent = dog.pedigree || 'Ikke oppgitt';
-      
       document.getElementById('profile-modal-health').textContent = dog.health || 'Ikke oppgitt';
       document.getElementById('profile-modal-titles').textContent = dog.titles || 'Ingen registrerte titler';
 
@@ -478,7 +661,6 @@
     function openEditDogModal() {
       const dog = cachedDogs.find(d => d.id === activeDogIdForModal);
       if (!dog) return;
-
       closeDogProfileModal();
 
       document.getElementById('dog-edit-id').value = dog.id;
@@ -486,7 +668,7 @@
       document.getElementById('dog-name').value = dog.name || '';
       document.getElementById('dog-reg-name').value = dog.reg_name || '';
       document.getElementById('dog-breed').value = dog.breed || '';
-      document.getElementById('dog-image-file').value = ''; // Nullstill filvelger
+      document.getElementById('dog-image-file').value = '';
       document.getElementById('dog-dob').value = dog.dob || '';
       document.getElementById('dog-gender').value = dog.gender || 'Tispe';
       document.getElementById('dog-height').value = dog.height || '';
@@ -497,9 +679,7 @@
       document.getElementById('dog-health').value = dog.health || '';
       document.getElementById('dog-titles').value = dog.titles || '';
 
-      setTimeout(() => {
-        document.getElementById('dog-modal').classList.remove('hidden');
-      }, 100);
+      setTimeout(() => document.getElementById('dog-modal').classList.remove('hidden'), 100);
     }
 
     function closeAddDogModal() {
@@ -508,89 +688,106 @@
       document.getElementById('dog-edit-id').value = '';
     }
 
+    function openAddLogModal() { document.getElementById('log-modal').classList.remove('hidden'); }
+    function closeAddLogModal() { document.getElementById('log-modal').classList.add('hidden'); document.getElementById('log-form').reset(); }
+
+    function openAddTrainingModal() { document.getElementById('training-modal').classList.remove('hidden'); }
+    function closeAddTrainingModal() { document.getElementById('training-modal').classList.add('hidden'); document.getElementById('training-form').reset(); }
+
+    function openAddCompetitionModal() { document.getElementById('competition-modal').classList.remove('hidden'); }
+    function closeAddCompetitionModal() { document.getElementById('competition-modal').classList.add('hidden'); document.getElementById('competition-form').reset(); }
+
     async function handleDogSubmit(e) {
       e.preventDefault();
       const editId = document.getElementById('dog-edit-id').value;
-      const name = document.getElementById('dog-name').value;
-      const reg_name = document.getElementById('dog-reg-name').value;
-      const breed = document.getElementById('dog-breed').value;
-      const dob = document.getElementById('dog-dob').value || null;
-      const gender = document.getElementById('dog-gender').value;
-      const height = document.getElementById('dog-height').value;
-      const weight = document.getElementById('dog-weight').value;
-      const nkk = document.getElementById('dog-nkk').value;
-      const chip = document.getElementById('dog-chip').value;
-      const pedigree = document.getElementById('dog-pedigree').value;
-      const health = document.getElementById('dog-health').value;
-      const titles = document.getElementById('dog-titles').value;
+      const payload = {
+        name: document.getElementById('dog-name').value,
+        reg_name: document.getElementById('dog-reg-name').value,
+        breed: document.getElementById('dog-breed').value,
+        dob: document.getElementById('dog-dob').value || null,
+        gender: document.getElementById('dog-gender').value,
+        height: document.getElementById('dog-height').value,
+        weight: document.getElementById('dog-weight').value,
+        nkk: document.getElementById('dog-nkk').value,
+        chip: document.getElementById('dog-chip').value,
+        pedigree: document.getElementById('dog-pedigree').value,
+        health: document.getElementById('dog-health').value,
+        titles: document.getElementById('dog-titles').value
+      };
 
       const fileInput = document.getElementById('dog-image-file');
-      
-      let image = null;
       if (editId) {
-        const existingDog = cachedDogs.find(d => d.id === editId);
-        if (existingDog) image = existingDog.image;
+        const existing = cachedDogs.find(d => d.id === editId);
+        if (existing) payload.image = existing.image;
       }
 
       if (fileInput.files && fileInput.files[0]) {
-        const file = fileInput.files[0];
         const reader = new FileReader();
-        reader.onload = async function(uploadEvent) {
-          image = uploadEvent.target.result;
-          await saveDogDataToSupabase(editId, { name, reg_name, breed, image, dob, gender, height, weight, nkk, chip, pedigree, health, titles });
+        reader.onload = async function(ev) {
+          payload.image = ev.target.result;
+          await saveDogDataToSupabase(editId, payload);
         };
-        reader.readAsDataURL(file);
+        reader.readAsDataURL(fileInput.files[0]);
       } else {
-        await saveDogDataToSupabase(editId, { name, reg_name, breed, image, dob, gender, height, weight, nkk, chip, pedigree, health, titles });
+        await saveDogDataToSupabase(editId, payload);
       }
     }
 
     async function saveDogDataToSupabase(editId, payload) {
-      let error;
-      if (editId) {
-        const res = await supabaseClient.from('dogs').update(payload).eq('id', editId);
-        error = res.error;
-      } else {
-        const res = await supabaseClient.from('dogs').insert([payload]);
-        error = res.error;
-      }
+      const { error } = editId 
+        ? await supabaseClient.from('dogs').update(payload).eq('id', editId)
+        : await supabaseClient.from('dogs').insert([payload]);
 
-      if (error) {
-        alert('Feil ved lagring av hund: ' + error.message);
-        return;
-      }
-
+      if (error) { alert('Feil ved lagring: ' + error.message); return; }
       closeAddDogModal();
       loadData();
     }
 
     async function deleteCurrentDogProfile() {
-      if (!activeDogIdForModal) return;
-      if (!confirm('Er du sikker på at du vil slette denne hunden? Alle tilknyttede logger kan bli påvirket.')) return;
-      
+      if (!activeDogIdForModal || !confirm('Er du sikker på at du vil slette denne hunden?')) return;
       const { error } = await supabaseClient.from('dogs').delete().eq('id', activeDogIdForModal);
-      if (error) {
-        alert('Feil ved sletting: ' + error.message);
-        return;
-      }
-
+      if (error) { alert('Feil: ' + error.message); return; }
       closeDogProfileModal();
       loadData();
     }
 
     async function handleLogSubmit(e) {
       e.preventDefault();
-      const dog_id = document.getElementById('log-dog-select').value;
-      const title = document.getElementById('log-title').value;
-      const notes = document.getElementById('log-notes').value;
-
-      const { error } = await supabaseClient.from('health_logs').insert([{ dog_id, title, notes }]);
-      if (error) {
-        alert('Feil ved lagring av logg: ' + error.message);
-        return;
-      }
-
+      const { error } = await supabaseClient.from('health_logs').insert([{
+        dog_id: document.getElementById('log-dog-select').value,
+        title: document.getElementById('log-title').value,
+        notes: document.getElementById('log-notes').value
+      }]);
+      if (error) { alert('Feil: ' + error.message); return; }
       closeAddLogModal();
+      loadData();
+    }
+
+    async function handleTrainingSubmit(e) {
+      e.preventDefault();
+      const { error } = await supabaseClient.from('training_logs').insert([{
+        dog_id: document.getElementById('training-dog-select').value,
+        activity: document.getElementById('training-activity').value,
+        focus: document.getElementById('training-focus').value,
+        reward: document.getElementById('training-reward').value,
+        notes: document.getElementById('training-notes').value
+      }]);
+      if (error) { alert('Feil: ' + error.message); return; }
+      closeAddTrainingModal();
+      loadData();
+    }
+
+    async function handleCompetitionSubmit(e) {
+      e.preventDefault();
+      const { error } = await supabaseClient.from('competitions').insert([{
+        dog_id: document.getElementById('competition-dog-select').value,
+        title: document.getElementById('competition-title').value,
+        placement: document.getElementById('competition-placement').value,
+        score: document.getElementById('competition-score').value,
+        notes: document.getElementById('competition-notes').value
+      }]);
+      if (error) { alert('Feil: ' + error.message); return; }
+      closeAddCompetitionModal();
       loadData();
     }
 
