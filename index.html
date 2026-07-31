@@ -1,261 +1,184 @@
 <!DOCTYPE html>
-<html lang="no" data-theme="light">
+<html lang="no">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sporia</title>
   
-  <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#ffffff">
-  <meta name="mobile-web-app-capable" content="yes">
-  <link rel="apple-touch-icon" href="icon-192.png">
-
-  <!-- Tailwind CSS + DaisyUI -->
-  <link href="https://cdn.jsdelivr.net/npm/daisyui@4.7.2/dist/full.min.css" rel="stylesheet" type="text/css" />
-  <script src="https://cdn.tailwindcss.com"></script>
-  
-  <!-- Inter Font -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { background-color: #f8fafc; color: #0f172a; padding-bottom: 80px; }
+    header { text-align: center; padding: 20px; background: #ffffff; border-bottom: 1px solid #e2e8f0; }
+    h1 { font-size: 1.5rem; font-weight: 700; color: #db2777; }
+    main { max-width: 480px; margin: 0 auto; padding: 16px; }
+    .card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 16px; margin-bottom: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+    h2 { font-size: 1.1rem; margin-bottom: 12px; color: #1e293b; }
+    .input-group { margin-bottom: 12px; }
+    label { display: block; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; color: #64748b; margin-bottom: 4px; }
+    input, select, textarea { width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 10px; font-size: 0.95rem; }
+    button { width: 100%; padding: 12px; background: #db2777; color: white; border: none; border-radius: 10px; font-weight: 600; cursor: pointer; }
+    button:hover { background: #be185d; }
+    nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(255,255,255,0.9); backdrop-filter: blur(8px); border-top: 1px solid #e2e8f0; display: flex; justify-content: space-around; padding: 12px 0; }
+    nav button { background: none; border: none; color: #64748b; font-weight: 600; font-size: 0.85rem; width: auto; padding: 4px 16px; }
+    nav button.active { color: #db2777; }
+    .hidden { display: none !important; }
+    .alert { padding: 10px; border-radius: 8px; font-size: 0.85rem; margin-top: 10px; }
+    .alert-success { background: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0; }
+    .alert-error { background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }
+    .item-list { display: flex; flex-direction: column; gap: 8px; }
+    .item-card { background: #fff; padding: 12px; border-radius: 10px; border: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; }
+  </style>
   
   <!-- Supabase JS Client -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-  <style>
-    body { font-family: 'Inter', sans-serif; }
-    .pb-safe { padding-bottom: env(safe-area-inset-bottom, 12px); }
-  </style>
 </head>
-<body class="bg-slate-50 min-h-screen text-slate-900 pb-24">
+<body>
 
-  <!-- Header -->
-  <header class="text-center pt-6 pb-2 px-4 max-w-md mx-auto">
-    <h1 class="text-2xl font-bold tracking-tight text-slate-900">Sporia</h1>
+  <header>
+    <h1>Sporia</h1>
   </header>
 
-  <!-- Global Feilmelding (vises øverst hvis skriptet krasjer) -->
-  <div id="global-error" class="hidden max-w-md mx-auto m-4 p-4 bg-red-100 border border-red-300 text-red-800 rounded-xl text-xs"></div>
+  <main>
+    <div id="global-error" class="alert alert-error hidden"></div>
 
-  <!-- Hovedinnhold -->
-  <main class="max-w-md mx-auto p-4 space-y-6">
-    
     <!-- STARTSIDE -->
-    <div id="tab-home" class="tab-content space-y-6">
-      <section class="card bg-slate-900 text-white p-6 rounded-2xl shadow-sm">
-        <h2 class="text-xl font-bold">Velkommen til Sporia</h2>
-        <p class="text-xs text-slate-300 mt-1">Oversikt over hundene dine og kommende hendelser.</p>
-        
-        <div class="mt-4 pt-4 border-t border-slate-800 flex justify-between items-center text-xs">
-          <span class="text-slate-400">Registrerte hunder</span>
-          <span id="home-dog-count" class="font-bold text-base text-pink-500">0</span>
+    <div id="tab-home" class="tab-content">
+      <div class="card" style="background: #0f172a; color: white;">
+        <h2>Velkommen til Sporia</h2>
+        <p style="font-size: 0.85rem; color: #94a3b8; margin-top: 4px;">Oversikt over hundene dine.</p>
+        <div style="margin-top: 16px; padding-top: 12px; border-top: 1px solid #1e293b; display: flex; justify-content: space-between; font-size: 0.85rem;">
+          <span style="color: #94a3b8;">Registrerte hunder</span>
+          <span id="home-dog-count" style="font-weight: bold; color: #db2777; font-size: 1.1rem;">0</span>
         </div>
-      </section>
-
-      <section>
-        <div class="flex justify-between items-center mb-3">
-          <h3 class="text-sm font-semibold uppercase tracking-wider text-slate-500">Mine hunder</h3>
-          <button onclick="switchTab('dogs')" class="text-xs font-semibold text-pink-600 hover:text-pink-700">Se alle</button>
-        </div>
-        <div id="homeDogList" class="flex gap-3 overflow-x-auto pb-2 scrollbar-none"></div>
-      </section>
-
-      <section class="space-y-2">
-        <h3 class="text-sm font-semibold uppercase tracking-wider text-slate-500 mb-3">Hurtighandlinger</h3>
-        <div class="grid grid-cols-2 gap-3">
-          <button onclick="switchTab('dogs')" class="card bg-white p-4 rounded-2xl border border-slate-200 text-left hover:border-pink-300 transition-colors">
-            <span class="text-xs font-semibold text-slate-900">Legg til hund</span>
-            <span class="text-[11px] text-slate-400 block mt-0.5">Ny registrering</span>
-          </button>
-          <button onclick="switchTab('health')" class="card bg-white p-4 rounded-2xl border border-slate-200 text-left hover:border-pink-300 transition-colors">
-            <span class="text-xs font-semibold text-slate-900">Ny aktivitet</span>
-            <span class="text-[11px] text-slate-400 block mt-0.5">Loggfør helse</span>
-          </button>
-        </div>
-      </section>
+      </div>
     </div>
 
     <!-- HUNDER -->
-    <div id="tab-dogs" class="tab-content hidden space-y-6">
-      <section class="card bg-white shadow-sm border border-slate-200 p-6 rounded-2xl">
-        <h2 class="text-lg font-semibold text-slate-900 mb-4">Legg til ny hund</h2>
-        
-        <form id="dogForm" class="space-y-4">
-          <div>
-            <label class="label text-xs font-semibold text-slate-600 uppercase">Navn *</label>
-            <input type="text" id="name" required class="input input-bordered w-full rounded-xl" placeholder="Eks. Penny" />
+    <div id="tab-dogs" class="tab-content hidden">
+      <div class="card">
+        <h2>Legg til ny hund</h2>
+        <form id="dogForm">
+          <div class="input-group">
+            <label>Navn *</label>
+            <input type="text" id="name" required placeholder="Eks. Penny" />
           </div>
-
-          <div>
-            <label class="label text-xs font-semibold text-slate-600 uppercase">Bilde</label>
-            <input type="file" id="image_file" accept="image/*" class="file-input file-input-bordered w-full rounded-xl text-sm" />
+          <div class="input-group">
+            <label>Rase</label>
+            <input type="text" id="breed" placeholder="Miniature American Shepherd" />
           </div>
-
-          <div class="grid grid-cols-2 gap-3">
-            <div>
-              <label class="label text-xs font-semibold text-slate-600 uppercase">Rase</label>
-              <input type="text" id="breed" class="input input-bordered w-full rounded-xl" placeholder="Miniature American Shepherd" />
-            </div>
-            <div>
-              <label class="label text-xs font-semibold text-slate-600 uppercase">Vekt (kg)</label>
-              <input type="number" step="0.1" id="weight_kg" class="input input-bordered w-full rounded-xl" />
-            </div>
-          </div>
-
-          <button type="submit" id="saveBtn" class="btn w-full bg-pink-600 hover:bg-pink-700 text-white font-medium rounded-xl border-none mt-2">
-            Lagre hund
-          </button>
+          <button type="submit" id="saveBtn">Lagre hund</button>
         </form>
-        <div id="statusMessage" class="hidden mt-4 alert text-sm py-2 rounded-xl"></div>
-      </section>
+        <div id="statusMessage" class="hidden"></div>
+      </div>
 
-      <section>
-        <h2 class="text-lg font-semibold text-slate-900 mb-3">Registrerte hunder</h2>
-        <div id="dogList" class="space-y-3"></div>
-      </section>
+      <div class="card">
+        <h2>Mine hunder</h2>
+        <div id="dogList" class="item-list">
+          <p style="font-size: 0.85rem; color: #94a3b8;">Laster hunder...</p>
+        </div>
+      </div>
     </div>
 
     <!-- AKTIVITETER -->
-    <div id="tab-health" class="tab-content hidden space-y-6">
-      <section class="card bg-white shadow-sm border border-slate-200 p-6 rounded-2xl">
-        <h2 class="text-lg font-semibold text-slate-900 mb-4">Loggfør aktivitet / vaksine</h2>
-        
-        <form id="healthForm" class="space-y-4">
-          <div>
-            <label class="label text-xs font-semibold text-slate-600 uppercase">Velg hund *</label>
-            <select id="log_dog_id" required class="select select-bordered w-full rounded-xl">
+    <div id="tab-health" class="tab-content hidden">
+      <div class="card">
+        <h2>Loggfør aktivitet</h2>
+        <form id="healthForm">
+          <div class="input-group">
+            <label>Velg hund *</label>
+            <select id="log_dog_id" required>
               <option value="">Velg hund...</option>
             </select>
           </div>
-
-          <div class="grid grid-cols-2 gap-3">
-            <div>
-              <label class="label text-xs font-semibold text-slate-600 uppercase">Kategori *</label>
-              <select id="log_category" required class="select select-bordered w-full rounded-xl">
-                <option value="Vaksine">Vaksine</option>
-                <option value="Flått">Flåttbehandling</option>
-                <option value="Veterinær">Veterinærbesøk</option>
-                <option value="Kloklipp">Kloklipp</option>
-                <option value="Rally Trening">Rally Trening</option>
-                <option value="Annet">Annet</option>
-              </select>
-            </div>
-            <div>
-              <label class="label text-xs font-semibold text-slate-600 uppercase">Dato *</label>
-              <input type="date" id="log_event_date" required class="input input-bordered w-full rounded-xl" />
-            </div>
+          <div class="input-group">
+            <label>Kategori *</label>
+            <select id="log_category" required>
+              <option value="Vaksine">Vaksine</option>
+              <option value="Rally Trening">Rally Trening</option>
+              <option value="Veterinær">Veterinærbesøk</option>
+              <option value="Annet">Annet</option>
+            </select>
           </div>
-
-          <div>
-            <label class="label text-xs font-semibold text-slate-600 uppercase">Beskrivelse / Tittel *</label>
-            <input type="text" id="log_title" required class="input input-bordered w-full rounded-xl" />
+          <div class="input-group">
+            <label>Dato *</label>
+            <input type="date" id="log_event_date" required />
           </div>
-
-          <div>
-            <label class="label text-xs font-semibold text-slate-600 uppercase">Notater (valgfritt)</label>
-            <textarea id="log_notes" class="textarea textarea-bordered w-full rounded-xl text-sm"></textarea>
+          <div class="input-group">
+            <label>Tittel *</label>
+            <input type="text" id="log_title" required placeholder="Eks. Grunnkurs" />
           </div>
-
-          <button type="submit" id="saveLogBtn" class="btn w-full bg-pink-600 hover:bg-pink-700 text-white font-medium rounded-xl border-none mt-2">
-            Lagre hendelse
-          </button>
+          <button type="submit">Lagre hendelse</button>
         </form>
-        <div id="healthStatusMessage" class="hidden mt-4 alert text-sm py-2 rounded-xl"></div>
-      </section>
+        <div id="healthStatusMessage" class="hidden"></div>
+      </div>
 
-      <section>
-        <h2 class="text-lg font-semibold text-slate-900 mb-3">Helse- & Aktivitetslogg</h2>
-        <div id="healthLogList" class="space-y-3"></div>
-      </section>
+      <div class="card">
+        <h2>Aktivitetslogg</h2>
+        <div id="healthLogList" class="item-list">
+          <p style="font-size: 0.85rem; color: #94a3b8;">Laster logg...</p>
+        </div>
+      </div>
     </div>
-
   </main>
 
-  <!-- Meny nederst -->
-  <nav class="fixed bottom-0 left-0 right-0 bg-white/80 backdrop-blur-md border-t border-slate-200/80 z-50 pb-safe">
-    <div class="max-w-md mx-auto flex justify-around items-center pt-2">
-      <button onclick="switchTab('home')" id="nav-btn-home" class="flex flex-col items-center gap-1 text-pink-600 py-1 px-4">
-        <span class="text-xs font-bold">Hjem</span>
-      </button>
-      <button onclick="switchTab('dogs')" id="nav-btn-dogs" class="flex flex-col items-center gap-1 text-slate-400 py-1 px-4">
-        <span class="text-xs font-bold">Hunder</span>
-      </button>
-      <button onclick="switchTab('health')" id="nav-btn-health" class="flex flex-col items-center gap-1 text-slate-400 py-1 px-4">
-        <span class="text-xs font-bold">Aktiviteter</span>
-      </button>
-    </div>
+  <nav>
+    <button onclick="switchTab('home')" id="nav-btn-home" class="active">Hjem</button>
+    <button onclick="switchTab('dogs')" id="nav-btn-dogs">Hunder</button>
+    <button onclick="switchTab('health')" id="nav-btn-health">Aktiviteter</button>
   </nav>
 
   <script>
-    // Fang opp eventuelle kjørefeil direkte på skjermen
     window.onerror = function(msg, url, lineNo) {
       const errBox = document.getElementById('global-error');
       if (errBox) {
         errBox.classList.remove('hidden');
-        errBox.innerHTML = `<strong>Feil i skript:</strong> ${msg} (Linje ${lineNo})`;
+        errBox.textContent = `Feil: ${msg} (Linje ${lineNo})`;
       }
-      return false;
     };
 
     const SUPABASE_URL = 'https://fhorhcvylrrzkstcggcc.supabase.co';
     const SUPABASE_ANON_KEY = 'sb_publishable_SYWW9tfgXUgqBt89h3BjOw_eh_rpw5O';
     
-    let supabaseClient;
+    let supabaseClient = null;
     try {
       supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     } catch(e) {
       console.error(e);
     }
 
-    let currentDogs = [];
-
-    // Sett dagens dato som standard
     const dateField = document.getElementById('log_event_date');
     if(dateField) dateField.value = new Date().toISOString().split('T')[0];
 
     function switchTab(tabName) {
       document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('hidden'));
-      
-      const homeBtn = document.getElementById('nav-btn-home');
-      const dogsBtn = document.getElementById('nav-btn-dogs');
-      const healthBtn = document.getElementById('nav-btn-health');
+      document.querySelectorAll('nav button').forEach(btn => btn.classList.remove('active'));
 
-      if (homeBtn) homeBtn.className = "flex flex-col items-center gap-1 text-slate-400 py-1 px-4";
-      if (dogsBtn) dogsBtn.className = "flex flex-col items-center gap-1 text-slate-400 py-1 px-4";
-      if (healthBtn) healthBtn.className = "flex flex-col items-center gap-1 text-slate-400 py-1 px-4";
+      document.getElementById('tab-' + tabName).classList.remove('hidden');
+      document.getElementById('nav-btn-' + tabName).classList.add('active');
 
-      if (tabName === 'home') {
-        document.getElementById('tab-home').classList.remove('hidden');
-        if (homeBtn) homeBtn.className = "flex flex-col items-center gap-1 text-pink-600 py-1 px-4";
-      } else if (tabName === 'dogs') {
-        document.getElementById('tab-dogs').classList.remove('hidden');
-        if (dogsBtn) dogsBtn.className = "flex flex-col items-center gap-1 text-pink-600 py-1 px-4";
-      } else if (tabName === 'health') {
-        document.getElementById('tab-health').classList.remove('hidden');
-        if (healthBtn) healthBtn.className = "flex flex-col items-center gap-1 text-pink-600 py-1 px-4";
-        loadHealthLogs();
-      }
+      if (tabName === 'health') loadHealthLogs();
     }
 
     async function loadDogs() {
       if (!supabaseClient) return;
       const { data: dogs, error } = await supabaseClient.from('dogs').select('*');
-      if (error) {
-        console.error('Feil ved lasting av hunder:', error.message);
-        return;
-      }
-
-      currentDogs = dogs || [];
+      
       const dogList = document.getElementById('dogList');
       const logDogSelect = document.getElementById('log_dog_id');
       const homeDogCount = document.getElementById('home-dog-count');
-      
+
+      if (error) {
+        if(dogList) dogList.innerHTML = `<p style="color:red; font-size:0.8rem;">Feil: ${error.message}</p>`;
+        return;
+      }
+
+      const currentDogs = dogs || [];
       if (homeDogCount) homeDogCount.textContent = currentDogs.length;
       if (logDogSelect) logDogSelect.innerHTML = '<option value="">Velg hund...</option>';
       if (dogList) dogList.innerHTML = '';
 
-      if (currentDogs.length === 0 && dogList) {
-        dogList.innerHTML = `<p class="text-sm text-slate-400 text-center py-4">Ingen hunder registrert ennå</p>`;
+      if (currentDogs.length === 0) {
+        if(dogList) dogList.innerHTML = `<p style="font-size: 0.85rem; color: #94a3b8;">Ingen hunder registrert ennå</p>`;
         return;
       }
 
@@ -267,10 +190,10 @@
           logDogSelect.appendChild(opt);
         }
         if (dogList) {
-          const d = document.createElement('div');
-          d.className = 'p-3 bg-white rounded-xl border border-slate-200 flex justify-between items-center';
-          d.innerHTML = `<span class="font-bold">${dog.name}</span><span class="text-xs text-slate-400">${dog.breed || ''}</span>`;
-          dogList.appendChild(d);
+          const item = document.createElement('div');
+          item.className = 'item-card';
+          item.innerHTML = `<strong>${dog.name}</strong><span style="font-size:0.8rem; color:#64748b;">${dog.breed || ''}</span>`;
+          dogList.appendChild(item);
         }
       });
     }
@@ -282,97 +205,73 @@
       if (!healthLogList) return;
       
       if (error) {
-        healthLogList.innerHTML = `<p class="text-xs text-red-500">Feil ved lasting av logg: ${error.message}</p>`;
+        healthLogList.innerHTML = `<p style="color:red; font-size:0.8rem;">Feil: ${error.message}</p>`;
         return;
       }
       
       healthLogList.innerHTML = '';
       if (!logs || logs.length === 0) {
-        healthLogList.innerHTML = `<p class="text-sm text-slate-400 text-center py-4">Ingen hendelser loggført ennå</p>`;
+        healthLogList.innerHTML = `<p style="font-size: 0.85rem; color: #94a3b8;">Ingen hendelser loggført ennå</p>`;
         return;
       }
 
       logs.forEach(log => {
         const item = document.createElement('div');
-        item.className = 'p-3 bg-white rounded-xl border border-slate-200 space-y-1';
-        item.innerHTML = `
-          <div class="flex justify-between text-xs font-bold text-slate-700">
-            <span>${log.title} (${log.category})</span>
-            <span>${log.event_date}</span>
-          </div>
-          <p class="text-xs text-slate-500">Hund: ${log.dogs ? log.dogs.name : 'Ukjent'}</p>
-        `;
+        item.className = 'item-card';
+        item.innerHTML = `<div><strong>${log.title}</strong><br><small style="color:#64748b;">${log.dogs ? log.dogs.name : ''} • ${log.category}</small></div><span style="font-size:0.8rem; color:#64748b;">${log.event_date}</span>`;
         healthLogList.appendChild(item);
       });
     }
 
-    // Håndter lagring av ny hund
-    const dogForm = document.getElementById('dogForm');
-    if (dogForm) {
-      dogForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const statusMsg = document.getElementById('statusMessage');
-        
-        try {
-          const newDog = {
-            name: document.getElementById('name').value,
-            breed: document.getElementById('breed').value || null,
-            weight_kg: document.getElementById('weight_kg').value ? parseFloat(document.getElementById('weight_kg').value) : null
-          };
+    document.getElementById('dogForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const statusMsg = document.getElementById('statusMessage');
+      try {
+        const newDog = {
+          name: document.getElementById('name').value,
+          breed: document.getElementById('breed').value || null
+        };
+        const { error } = await supabaseClient.from('dogs').insert([newDog]);
+        if (error) throw error;
 
-          const { error } = await supabaseClient.from('dogs').insert([newDog]);
-          if (error) throw error;
+        statusMsg.className = 'alert alert-success';
+        statusMsg.textContent = `${newDog.name} lagret!`;
+        statusMsg.classList.remove('hidden');
+        document.getElementById('dogForm').reset();
+        await loadDogs();
+      } catch (err) {
+        statusMsg.className = 'alert alert-error';
+        statusMsg.textContent = 'Feil: ' + err.message;
+        statusMsg.classList.remove('hidden');
+      }
+    });
 
-          statusMsg.className = 'mt-4 alert alert-success text-sm py-2 rounded-xl text-slate-800 bg-emerald-50 border border-emerald-200';
-          statusMsg.textContent = `${newDog.name} ble lagret!`;
-          statusMsg.classList.remove('hidden');
+    document.getElementById('healthForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const healthStatusMsg = document.getElementById('healthStatusMessage');
+      try {
+        const newLog = {
+          dog_id: document.getElementById('log_dog_id').value,
+          category: document.getElementById('log_category').value,
+          event_date: document.getElementById('log_event_date').value,
+          title: document.getElementById('log_title').value
+        };
+        const { error } = await supabaseClient.from('health_logs').insert([newLog]);
+        if (error) throw error;
 
-          dogForm.reset();
-          await loadDogs();
-        } catch (err) {
-          statusMsg.className = 'mt-4 alert alert-error text-sm py-2 rounded-xl text-white bg-red-500';
-          statusMsg.textContent = 'Feil ved lagring: ' + err.message;
-          statusMsg.classList.remove('hidden');
-        }
-      });
-    }
+        healthStatusMsg.className = 'alert alert-success';
+        healthStatusMsg.textContent = 'Hendelse lagret!';
+        healthStatusMsg.classList.remove('hidden');
+        document.getElementById('healthForm').reset();
+        document.getElementById('log_event_date').value = new Date().toISOString().split('T')[0];
+        await loadHealthLogs();
+      } catch (err) {
+        healthStatusMsg.className = 'alert alert-error';
+        healthStatusMsg.textContent = 'Feil: ' + err.message;
+        healthStatusMsg.classList.remove('hidden');
+      }
+    });
 
-    // Håndter lagring av helselogg
-    const healthForm = document.getElementById('healthForm');
-    if (healthForm) {
-      healthForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const healthStatusMsg = document.getElementById('healthStatusMessage');
-
-        try {
-          const newLog = {
-            dog_id: document.getElementById('log_dog_id').value,
-            category: document.getElementById('log_category').value,
-            event_date: document.getElementById('log_event_date').value,
-            title: document.getElementById('log_title').value,
-            notes: document.getElementById('log_notes').value || null
-          };
-
-          const { error } = await supabaseClient.from('health_logs').insert([newLog]);
-          if (error) throw error;
-
-          healthStatusMsg.className = 'mt-4 alert alert-success text-sm py-2 rounded-xl text-slate-800 bg-emerald-50 border border-emerald-200';
-          healthStatusMsg.textContent = 'Hendelse lagret!';
-          healthStatusMsg.classList.remove('hidden');
-
-          healthForm.reset();
-          document.getElementById('log_event_date').value = new Date().toISOString().split('T')[0];
-          await loadHealthLogs();
-        } catch (err) {
-          healthStatusMsg.className = 'mt-4 alert alert-error text-sm py-2 rounded-xl text-white bg-red-500';
-          healthStatusMsg.textContent = 'Feil ved lagring: ' + err.message;
-          healthStatusMsg.classList.remove('hidden');
-        }
-      });
-    }
-
-    // Kjør oppstart
-    switchTab('home');
     loadDogs();
   </script>
 </body>
