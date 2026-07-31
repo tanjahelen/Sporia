@@ -40,21 +40,36 @@
       -webkit-backdrop-filter: blur(20px);
       border: 1px solid rgba(255, 255, 255, 0.4);
     }
+    /* Skjul rullende bar for penere horisontal meny */
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
   </style>
 </head>
-<body class="h-full flex flex-col justify-between selection:bg-appleBlue selection:text-white pb-20">
+<body class="h-full flex flex-col justify-between selection:bg-appleBlue selection:text-white pb-24">
 
-  <!-- TOP HEADER -->
-  <header class="sticky top-0 z-50 glass-card border-b border-gray-200/60 px-4 py-3 flex items-center justify-between">
-    <div class="flex items-center space-x-2">
-      <div class="w-8 h-8 rounded-full bg-appleBlue flex items-center justify-center text-white font-semibold shadow-sm">
-        <i class="fa-solid fa-paw text-sm"></i>
+  <!-- TOP HEADER MED HUNDEVELGER / PROFILER -->
+  <header class="sticky top-0 z-50 glass-card border-b border-gray-200/60 px-4 py-3 space-y-3">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center space-x-2">
+        <div class="w-8 h-8 rounded-full bg-appleBlue flex items-center justify-center text-white font-semibold shadow-sm">
+          <i class="fa-solid fa-paw text-sm"></i>
+        </div>
+        <h1 class="text-lg font-semibold tracking-tight text-appleText">Sporia</h1>
       </div>
-      <h1 class="text-lg font-semibold tracking-tight text-appleText">Sporia</h1>
+      <div id="connection-status" class="flex items-center space-x-1.5 text-xs font-medium px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800">
+        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+        <span id="status-text">Koblet til</span>
+      </div>
     </div>
-    <div id="connection-status" class="flex items-center space-x-1.5 text-xs font-medium px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800">
-      <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-      <span id="status-text">Koble til...</span>
+
+    <!-- HORISONTAL HUNDEVELGER / PROFILER I TOPPEN -->
+    <div class="flex items-center space-x-3 overflow-x-auto no-scrollbar pt-1 pb-1" id="header-dogs-container">
+      <div class="text-xs text-appleSub py-1">Laster hundeprofiler...</div>
     </div>
   </header>
 
@@ -79,26 +94,11 @@
       </div>
     </section>
 
-    <!-- DOGS SECTION -->
-    <section class="glass-card rounded-2xl p-5 shadow-sm border border-gray-100 space-y-4">
-      <div class="flex items-center justify-between">
-        <h2 class="text-base font-semibold text-appleText">Dine hunder</h2>
-        <button onclick="openAddDogModal()" class="text-xs font-medium bg-appleBlue text-white px-3 py-1.5 rounded-full hover:bg-appleBlueHover transition active:scale-95 shadow-sm">
-          <i class="fa-solid fa-plus mr-1"></i> Ny hund
-        </button>
-      </div>
-      
-      <!-- Dogs List -->
-      <div id="dogs-container" class="space-y-3">
-        <div class="text-center py-6 text-appleSub text-sm">Laster hunder...</div>
-      </div>
-    </section>
-
     <!-- HEALTH LOGS SECTION -->
     <section class="glass-card rounded-2xl p-5 shadow-sm border border-gray-100 space-y-4">
       <div class="flex items-center justify-between">
         <h2 class="text-base font-semibold text-appleText">Siste helselogger</h2>
-        <button onclick="openAddLogModal()" class="text-xs font-medium bg-gray-200 text-appleText px-3 py-1.5 rounded-full hover:bg-gray-300 transition active:scale-95">
+        <button onclick="openAddLogModal()" class="text-xs font-medium bg-appleBlue text-white px-3 py-1.5 rounded-full hover:bg-appleBlueHover transition active:scale-95 shadow-sm">
           <i class="fa-solid fa-plus mr-1"></i> Ny logg
         </button>
       </div>
@@ -110,6 +110,42 @@
     </section>
 
   </main>
+
+  <!-- MODAL: DOG PROFILE / DETAILS -->
+  <div id="dog-profile-modal" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
+    <div class="glass-card w-full sm:max-w-md rounded-t-3xl sm:rounded-2xl p-6 shadow-2xl border border-gray-200 space-y-4 animate-in fade-in slide-in-from-bottom duration-200">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center space-x-3">
+          <div id="profile-modal-avatar" class="w-12 h-12 rounded-full bg-appleBlue text-white flex items-center justify-center font-bold text-lg shadow-sm">
+            H
+          </div>
+          <div>
+            <h3 id="profile-modal-name" class="text-lg font-semibold text-appleText">Hundens navn</h3>
+            <p id="profile-modal-breed" class="text-xs text-appleSub">Rase</p>
+          </div>
+        </div>
+        <button onclick="closeDogProfileModal()" class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-appleSub hover:bg-gray-200">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      
+      <div class="bg-white/60 p-4 rounded-xl border border-gray-100 space-y-2 text-sm">
+        <div class="flex justify-between py-1 border-b border-gray-100">
+          <span class="text-appleSub">Fødselsdato:</span>
+          <span id="profile-modal-dob" class="font-medium text-appleText">-</span>
+        </div>
+      </div>
+
+      <div class="pt-2 flex space-x-3">
+        <button onclick="deleteCurrentDogProfile()" class="flex-1 py-2.5 bg-rose-50 text-rose-600 font-medium rounded-xl hover:bg-rose-100 transition text-sm">
+          Slett hund
+        </button>
+        <button onclick="closeDogProfileModal()" class="flex-1 py-2.5 bg-gray-100 text-appleText font-medium rounded-xl hover:bg-gray-200 transition text-sm">
+          Lukk
+        </button>
+      </div>
+    </div>
+  </div>
 
   <!-- MODAL: ADD DOG -->
   <div id="dog-modal" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
@@ -179,11 +215,11 @@
     </button>
     <button onclick="openAddDogModal()" class="flex flex-col items-center text-appleSub hover:text-appleBlue transition">
       <i class="fa-solid fa-dog text-lg"></i>
-      <span class="text-[10px] font-medium mt-0.5">Hunder</span>
+      <span class="text-[10px] font-medium mt-0.5">Ny hund</span>
     </button>
     <button onclick="openAddLogModal()" class="flex flex-col items-center text-appleSub hover:text-appleBlue transition">
       <i class="fa-solid fa-notes-medical text-lg"></i>
-      <span class="text-[10px] font-medium mt-0.5">Logger</span>
+      <span class="text-[10px] font-medium mt-0.5">Ny logg</span>
     </button>
   </nav>
 
@@ -194,6 +230,7 @@
 
     let supabaseClient = null;
     let cachedDogs = [];
+    let activeDogIdForModal = null;
 
     try {
       supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -204,7 +241,6 @@
       document.getElementById('connection-status').className = 'flex items-center space-x-1.5 text-xs font-medium px-2.5 py-1 rounded-full bg-rose-100 text-rose-800';
     }
 
-    // Initialize application data
     window.addEventListener('DOMContentLoaded', () => {
       loadData();
     });
@@ -215,13 +251,13 @@
     }
 
     async function fetchDogs() {
-      const container = document.getElementById('dogs-container');
+      const headerContainer = document.getElementById('header-dogs-container');
       const select = document.getElementById('log-dog-select');
       
       const { data, error } = await supabaseClient.from('dogs').select('*').order('created_at', { ascending: false });
       
       if (error) {
-        container.innerHTML = `<div class="text-center py-4 text-rose-500 text-xs">Kunne ikke laste hunder</div>`;
+        headerContainer.innerHTML = `<div class="text-xs text-rose-500">Kunne ikke laste hunder</div>`;
         return;
       }
 
@@ -229,27 +265,32 @@
       document.getElementById('dog-count').textContent = cachedDogs.length;
 
       if (cachedDogs.length === 0) {
-        container.innerHTML = `<div class="text-center py-4 text-appleSub text-xs">Ingen hunder registrert ennå.</div>`;
+        headerContainer.innerHTML = `
+          <button onclick="openAddDogModal()" class="flex items-center space-x-2 bg-white/80 border border-dashed border-gray-300 rounded-full px-3 py-1 text-xs text-appleSub hover:border-appleBlue hover:text-appleBlue transition">
+            <i class="fa-solid fa-plus"></i>
+            <span>Legg til hund</span>
+          </button>
+        `;
         select.innerHTML = `<option value="">Ingen hunder tilgjengelig</option>`;
         return;
       }
 
-      container.innerHTML = cachedDogs.map(dog => `
-        <div class="flex items-center justify-between p-3 rounded-xl bg-white/60 border border-gray-100 shadow-2xs">
-          <div class="flex items-center space-x-3">
-            <div class="w-10 h-10 rounded-full bg-blue-50 text-appleBlue flex items-center justify-center font-bold">
-              ${dog.name.charAt(0).toUpperCase()}
-            </div>
-            <div>
-              <h4 class="text-sm font-semibold text-appleText">${escapeHtml(dog.name)}</h4>
-              <p class="text-xs text-appleSub">${escapeHtml(dog.breed || 'Ukjent rase')}</p>
-            </div>
+      // Generer runde profilavatarer i toppen + "Legg til ny"-knapp bakerst
+      headerContainer.innerHTML = cachedDogs.map(dog => `
+        <button onclick="openDogProfile('${dog.id}')" class="flex flex-col items-center space-y-1 group focus:outline-none shrink-0">
+          <div class="w-11 h-11 rounded-full bg-gradient-to-tr from-appleBlue to-blue-400 text-white flex items-center justify-center font-bold text-sm shadow-sm ring-2 ring-white group-hover:scale-105 transition">
+            ${dog.name.charAt(0).toUpperCase()}
           </div>
-          <button onclick="deleteDog('${dog.id}')" class="text-gray-400 hover:text-rose-500 p-2 transition">
-            <i class="fa-solid fa-trash-can text-xs"></i>
-          </button>
-        </div>
-      `).join('');
+          <span class="text-[11px] font-medium text-appleText max-w-[60px] truncate">${escapeHtml(dog.name)}</span>
+        </button>
+      `).join('') + `
+        <button onclick="openAddDogModal()" class="flex flex-col items-center space-y-1 group focus:outline-none shrink-0 ml-1">
+          <div class="w-11 h-11 rounded-full bg-gray-200 text-appleSub flex items-center justify-center text-sm shadow-sm ring-2 ring-white group-hover:bg-gray-300 transition">
+            <i class="fa-solid fa-plus"></i>
+          </div>
+          <span class="text-[11px] font-medium text-appleSub">Ny</span>
+        </button>
+      `;
 
       select.innerHTML = '<option value="">Velg hund...</option>' + cachedDogs.map(dog => `
         <option value="${dog.id}">${escapeHtml(dog.name)}</option>
@@ -289,6 +330,39 @@
       `).join('');
     }
 
+    // Modal Controls for Dog Profile
+    function openDogProfile(dogId) {
+      const dog = cachedDogs.find(d => d.id === dogId);
+      if (!dog) return;
+
+      activeDogIdForModal = dog.id;
+      document.getElementById('profile-modal-name').textContent = dog.name;
+      document.getElementById('profile-modal-breed').textContent = dog.breed || 'Ukjent rase';
+      document.getElementById('profile-modal-dob').textContent = dog.dob ? new Date(dog.dob).toLocaleDateString('no-NO') : 'Ikke oppgitt';
+      document.getElementById('profile-modal-avatar').textContent = dog.name.charAt(0).toUpperCase();
+
+      document.getElementById('dog-profile-modal').classList.remove('hidden');
+    }
+
+    function closeDogProfileModal() {
+      document.getElementById('dog-profile-modal').classList.add('hidden');
+      activeDogIdForModal = null;
+    }
+
+    async function deleteCurrentDogProfile() {
+      if (!activeDogIdForModal) return;
+      if (!confirm('Er du sikker på at du vil slette denne hunden? Alle tilknyttede logger kan bli påvirket.')) return;
+      
+      const { error } = await supabaseClient.from('dogs').delete().eq('id', activeDogIdForModal);
+      if (error) {
+        alert('Feil ved sletting: ' + error.message);
+        return;
+      }
+
+      closeDogProfileModal();
+      loadData();
+    }
+
     // Modal Controls
     function openAddDogModal() { document.getElementById('dog-modal').classList.remove('hidden'); }
     function closeAddDogModal() { document.getElementById('dog-modal').classList.add('hidden'); document.getElementById('dog-form').reset(); }
@@ -310,7 +384,7 @@
       }
 
       closeAddDogModal();
-      fetchDogs();
+      loadData();
     }
 
     async function handleLogSubmit(e) {
@@ -326,16 +400,6 @@
       }
 
       closeAddLogModal();
-      fetchLogs();
-    }
-
-    async function deleteDog(id) {
-      if (!confirm('Er du sikker på at du vil slette denne hunden?')) return;
-      const { error } = await supabaseClient.from('dogs').delete().eq('id', id);
-      if (error) {
-        alert('Feil ved sletting: ' + error.message);
-        return;
-      }
       loadData();
     }
 
